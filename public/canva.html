@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canva Slide Deck Helper — Bong Heng Café POS</title>
+    <!-- Google Fonts: Kantumruy Pro for Khmer & Plus Jakarta Sans for English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Kantumruy Pro"', 'sans-serif'],
+                        khmer: ['"Kantumruy Pro"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        canva: {
+                            cyan: '#00c4cc',
+                            purple: '#7d2ae8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', sans-serif;
+            background-color: #0c0a09;
+            color: #f5f5f4;
+        }
+        .glass-card {
+            background: rgba(28, 25, 23, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-950/20 via-stone-950 to-black p-4 sm:p-8">
+
+    <!-- Header Section -->
+    <header class="max-w-6xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-8 border-b border-white/10">
+        <div>
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-canva-cyan/20 to-canva-purple/20 border border-canva-cyan/40 text-canva-cyan text-xs font-bold uppercase tracking-wider mb-2">
+                <span>🎨 Canva Presentation Companion</span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl font-extrabold text-white font-khmer">
+                ជំនួយការរៀបចំស្លាយក្នុង Canva
+            </h1>
+            <p class="text-xs sm:text-sm text-stone-400 mt-1 font-khmer">
+                Bong Heng Café POS & Inventory Management System — សម្រាប់ក្រុម ៤ នាក់
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+            <a href="https://www.canva.com" target="_blank" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-canva-cyan to-canva-purple text-white font-bold text-xs shadow-lg hover:opacity-90 transition flex items-center gap-2">
+                <span>🚀 បើក Canva.com</span>
+            </a>
+            <button onclick="copyAllMarkdown()" class="px-4 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-lg transition flex items-center gap-2">
+                <span id="copy-all-icon">📋</span>
+                <span id="copy-all-text">Copy All 16 Slides</span>
+            </button>
+            <a href="/slides" class="px-4 py-2.5 rounded-2xl bg-stone-900 border border-white/20 hover:border-amber-400 text-stone-200 font-bold text-xs transition">
+                <span>🖥️ បើក Web Slide Deck</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto py-8 space-y-8">
+
+        <!-- ============================================================== -->
+        <!-- GOOGLE SLIDES DIRECT IMPORT CARD -->
+        <!-- ============================================================== -->
+        <div class="glass-card rounded-3xl p-6 sm:p-8 border-emerald-500/30 shadow-2xl relative overflow-hidden">
+            <div class="absolute -right-12 -bottom-12 w-48 h-48 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold uppercase tracking-wider mb-2">
+                        <span>📊 Google Slides (.PPTX) Ready</span>
+                    </div>
+                    <h2 class="text-xl sm:text-2xl font-bold text-white font-khmer">
+                        របៀបដាក់ចូលក្នុង Google Slides ដោយស្វ័យប្រវត្តិតាមរយៈ Upload .PPTX
+                    </h2>
+                    <p class="text-xs text-stone-300 font-khmer mt-1">
+                        យើងបានបង្កើត File PowerPoint ស្ដង់ដារ ១៦ ស្លាយរួចរាល់ សម្រាប់ Upload ចូល Google Slides ភ្លាមៗ៖
+                    </p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2 shrink-0">
+                    <a href="/Bong_Heng_Cafe_Presentation.pptx" download="Bong_Heng_Cafe_Presentation.pptx" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg transition flex items-center gap-2">
+                        <span>📥</span>
+                        <span>ទាញយក PPTX (Download)</span>
+                    </a>
+                    <a href="https://docs.google.com/presentation/u/0/" target="_blank" class="px-5 py-2.5 rounded-2xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-xs shadow-lg transition flex items-center gap-2">
+                        <span>🚀</span>
+                        <span>បើក Google Slides</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid sm:grid-cols-3 gap-4 mt-6">
+                <!-- Step 1 -->
+                <div class="p-4 rounded-2xl bg-stone-900/90 border border-white/10 space-y-2">
+                    <div class="h-8 w-8 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center text-sm">1</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">ទាញយកឯកសារ .PPTX</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ចុចប៊ូតុង <strong>"ទាញយក PPTX"</strong> ឬប្រើប្រាស់ File ដែលមានស្រាប់ក្នុង folder គម្រោង: <code class="font-mono text-emerald-400 text-[11px]">Bong_Heng_Cafe_Presentation.pptx</code>។
+                    </p>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="p-4 rounded-2xl bg-stone-900/90 border border-white/10 space-y-2">
+                    <div class="h-8 w-8 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center text-sm">2</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">បើក Google Slides</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ចូលទៅកាន់ <a href="https://docs.google.com/presentation/u/0/" target="_blank" class="text-amber-400 underline font-mono">docs.google.com/presentation</a> ➔ ចុចលើរូប Folder (Open file picker) នៅខាងស្តាំ។
+                    </p>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="p-4 rounded-2xl bg-stone-900/90 border border-white/10 space-y-2">
+                    <div class="h-8 w-8 rounded-xl bg-cyan-500/20 text-cyan-400 font-bold flex items-center justify-center text-sm">3</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">Upload ចូល</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ចុចលើផ្ទាំង <strong>Upload</strong> ➔ Drag and Drop ឯកសារ <code class="text-white">.pptx</code> ចូល ➔ Google Slides នឹងបើកស្លាយទាំង ១៦ យ៉ាងស្អាតជាមួយ Speaker Notes ភ្លាមៗ!
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- BRAND COLOR SWATCHES & FONTS -->
+        <!-- ============================================================== -->
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Colors -->
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Canva Color Palette</span>
+                <h3 class="text-base font-bold text-white font-khmer">កូដពណ៌ស្ដង់ដារសម្រាប់ Canva (Brand Colors)</h3>
+                <p class="text-xs text-stone-400 font-khmer">ចុចលើកូដពណ៌ដើម្បី Copy យកទៅ Paste ក្នុង Color Picker របស់ Canva៖</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+                    <button onclick="copyColor('#1C1917')" class="p-3 rounded-2xl bg-[#1C1917] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-400 font-mono block">Espresso Black</span>
+                        <span class="text-xs font-bold text-white font-mono">#1C1917</span>
+                    </button>
+                    <button onclick="copyColor('#292524')" class="p-3 rounded-2xl bg-[#292524] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-400 font-mono block">Warm Card</span>
+                        <span class="text-xs font-bold text-white font-mono">#292524</span>
+                    </button>
+                    <button onclick="copyColor('#F59E0B')" class="p-3 rounded-2xl bg-[#F59E0B] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-900 font-mono block">Amber Gold</span>
+                        <span class="text-xs font-bold text-stone-950 font-mono">#F59E0B</span>
+                    </button>
+                    <button onclick="copyColor('#10B981')" class="p-3 rounded-2xl bg-[#10B981] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-900 font-mono block">Emerald Green</span>
+                        <span class="text-xs font-bold text-stone-950 font-mono">#10B981</span>
+                    </button>
+                    <button onclick="copyColor('#FFFFFF')" class="p-3 rounded-2xl bg-[#FFFFFF] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-600 font-mono block">Pure White</span>
+                        <span class="text-xs font-bold text-stone-950 font-mono">#FFFFFF</span>
+                    </button>
+                    <button onclick="copyColor('#A8A29E')" class="p-3 rounded-2xl bg-[#A8A29E] border border-white/20 text-left hover:scale-105 transition">
+                        <span class="text-[10px] text-stone-900 font-mono block">Stone Text</span>
+                        <span class="text-xs font-bold text-stone-950 font-mono">#A8A29E</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fonts & Canva Templates -->
+            <div class="glass-card rounded-3xl p-6 space-y-4">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Canva Fonts & Templates</span>
+                <h3 class="text-base font-bold text-white font-khmer">ពុម្ពអក្សរ & គំរូ Template ណែនាំក្នុង Canva</h3>
+
+                <div class="space-y-3 text-xs font-khmer text-stone-300">
+                    <div class="p-3 rounded-2xl bg-stone-900/80 border border-white/10">
+                        <span class="text-amber-400 font-bold font-sans">🇰🇭 Font ខ្មែរឥតគិតថ្លៃក្នុង Canva:</span>
+                        <p class="text-stone-200 mt-1"><strong>Kantumruy Pro</strong> (ណែនាំបំផុត), <strong>Battambang</strong>, ឬ <strong>Koulen</strong> (សម្រាប់ចំណងជើងធំ)</p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-stone-900/80 border border-white/10">
+                        <span class="text-amber-400 font-bold font-sans">🇬🇧 Font អង់គ្លេសក្នុង Canva:</span>
+                        <p class="text-stone-200 mt-1"><strong>Plus Jakarta Sans</strong>, <strong>Montserrat</strong>, ឬ <strong>League Spartan</strong></p>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-stone-900/80 border border-white/10">
+                        <span class="text-amber-400 font-bold font-sans">🔍 ពាក្យគន្លឹះសម្រាប់ Search រក Template ស្អាត:</span>
+                        <p class="text-stone-200 mt-1"><em>"Dark Mode Pitch Deck"</em>, <em>"Coffee Shop Modern Presentation"</em>, <em>"Technology Startup Minimalist"</em></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- SLIDE-BY-SLIDE COPY CARDS -->
+        <!-- ============================================================== -->
+        <div class="space-y-4 pt-4">
+            <div class="flex items-center justify-between border-b border-white/10 pb-3">
+                <div>
+                    <h2 class="text-lg sm:text-2xl font-bold text-white font-khmer">ចម្លងតាមស្លាយនីមួយៗ (Slide by Slide Content)</h2>
+                    <p class="text-xs text-stone-400 font-khmer">សម្រាប់អ្នកចង់ Copy ដាក់ចូលក្នុង Canva Textbox ដោយផ្ទាល់៖</p>
+                </div>
+                <span class="text-xs text-amber-400 font-mono">16 Slides Available</span>
+            </div>
+
+            <div id="slides-cards-container" class="space-y-4">
+                <!-- Dynamic cards populated via JavaScript -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Toast Notification for Copy -->
+    <div id="toast" class="fixed bottom-6 right-6 px-4 py-3 rounded-2xl bg-emerald-600 text-white font-bold text-xs shadow-2xl transition-all duration-300 transform translate-y-24 opacity-0 flex items-center gap-2 z-50">
+        <span>✓</span>
+        <span id="toast-message">Copied to clipboard!</span>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // The 16 Canva-formatted slides
+        const canvaSlidesData = [
+            {
+                number: 1,
+                speaker: "Speaker 1",
+                title: "Bong Heng Café POS — ប្រព័ន្ធគ្រប់គ្រងការលក់ និងស្តុកហាងកាហ្វេ",
+                subtitle: "Enterprise Specialty Coffee Point of Sale & Recipe-Driven Inventory Control",
+                content: `• សមាជិកធ្វើបទបង្ហាញ:\n  - Speaker 1: [ឈ្មោះ] — សេចក្តីផ្តើម, បញ្ហា & ស្ថាបត្យកម្ម\n  - Speaker 2: [ឈ្មោះ] — ដំណើរការលក់ (POS), Table & Bakong KHQR\n  - Speaker 3: [ឈ្មោះ] — រូបមន្តភេសជ្ជៈ (Recipe BOM) & Auto-Deduction\n  - Speaker 4: [ឈ្មោះ] — ទិញចូល (GRN), របាយការណ៍ & Pest Testing\n• បច្ចេកវិទ្យា: Laravel 12 • PHP 8.4 • PostgreSQL • Tailwind CSS • Pest PHP`
+            },
+            {
+                number: 2,
+                speaker: "Speaker 1",
+                title: "ផែនទីបង្ហាញផ្លូវនៃបទបង្ហាញ (Agenda)",
+                subtitle: "Roadmap នៃការបែងចែកផ្នែកទាំង ៤",
+                content: `01. សេចក្តីផ្តើម & ស្ថាបត្យកម្ម (Speaker 1)\n• បញ្ហាប្រឈមក្នុងហាងកាហ្វេ, Technology Stack, និងសិទ្ធិប្រើប្រាស់ (Admin vs Barista)\n\n02. ដំណើរការលក់ POS & ការទូទាត់ (Speaker 2)\n• Touch POS UI, Product Variants, Table Management, និង Bakong KHQR\n\n03. រូបមន្តភេសជ្ជៈ & ការកាត់ស្តុក (Speaker 3)\n• Recipe BOM, InventoryService (DB Transaction), ការបំប្លែងខ្នាត, និង Gross Margins\n\n04. ទិញចូល, របាយការណ៍ & Testing (Speaker 4)\n• Purchases (GRN), ការកត់ត្រាខូចខាត (Waste), Asset Valuation, និង Pest 62 Tests`
+            },
+            {
+                number: 3,
+                speaker: "Speaker 1",
+                title: "បញ្ហាប្រឈមជាក់ស្តែងក្នុងហាងកាហ្វេ (Problem Statement)",
+                subtitle: "ហេតុអ្វីបានជាអាជីវកម្មកាហ្វេត្រូវការប្រព័ន្ធនេះ?",
+                content: `• បាត់បង់ស្តុកដោយមិនដឹងខ្លួន (Inventory Shrinkage):\n  - គ្រាប់កាហ្វេ ទឹកដោះគោ និងស៊ីរ៉ូ ប្រើប្រាស់លើស ឬកំពប់ដោយគ្មានការកត់ត្រាច្បាស់លាស់តាមកែវ។\n\n• មិនដឹងថ្លៃដើមពិតប្រាកដ (Unknown COGS):\n  - ម្ចាស់ហាងពិបាកកំណត់ថាក្នុងមួយកែវចំណាយថ្លៃគ្រឿងផ្សំអស់ប៉ុន្មាន ធ្វើឱ្យខ្វះភាពសុក្រឹតលើប្រាក់ចំណេញ។\n\n• ការទូទាត់ និងការគ្រប់គ្រងតុយឺតយ៉ាវ (Operational Bottleneck):\n  - ការគ្រប់គ្រងតុត្រូវកត់ក្រដាស ខ្វះ QR កូដស្ដង់ដារជាតិ (Bakong KHQR) ធ្វើឱ្យអតិថិជនរង់ចាំយូរ។\n\n💡 ដំណោះស្រាយ: POS ភ្ជាប់ស្វ័យប្រវត្តិនូវរាល់ការលក់ទៅកាន់រូបមន្ត Recipe BOM ដើម្បីកាត់ស្តុកតាម ml និង g ភ្លាមៗ!`
+            },
+            {
+                number: 4,
+                speaker: "Speaker 1",
+                title: "បច្ចេកវិទ្យា & ស្ថាបត្យកម្មប្រព័ន្ធ (Technology Stack)",
+                subtitle: "គ្រឹះបច្ចេកវិទ្យាកម្រិត Enterprise",
+                content: `• Backend: Laravel 12 (PHP 8.4)\n  - Strict Types, Constructor Promotion, និង Database Transactions\n\n• Database: PostgreSQL\n  - ACID Compliance, JSONB, និង decimal(10, 4) សម្រាប់គណនាថ្លៃដើមគ្រឿងផ្សំសុក្រឹតដល់ ៤ ខ្ទង់\n\n• Frontend: Tailwind CSS + Alpine.js\n  - ចំណុចប្រទាក់ទំនើប (Dark Espresso & Amber), ដំណើរការលឿនគ្មាន Reload Page\n\n• Quality: Pest PHP (62 Tests Passing)\n  - Feature & Unit Testing ១០០% ជោគជ័យ និង Format កូដស្អាតជាមួយ Laravel Pint (PSR-12)`
+            },
+            {
+                number: 5,
+                speaker: "Speaker 1",
+                title: "ការបែងចែកសិទ្ធិប្រើប្រាស់ (Role-Based Access Control)",
+                subtitle: "សុវត្ថិភាពទិន្នន័យ និងតួនាទី (RBAC Model)",
+                content: `👑 Administrator (អ្នកគ្រប់គ្រង):\n• គ្រប់គ្រងទំនិញ, Categories, និងរូបមន្តភេសជ្ជៈ (Recipes & Costing)\n• គ្រប់គ្រងអ្នកផ្គត់ផ្គង់ និងការទិញចូល (Purchases / GRN)\n• កែសម្រួលស្តុក (Adjust/Waste) និងពិនិត្យរបាយការណ៍តម្លៃស្តុក\n• គ្រប់គ្រងគណនីបុគ្គលិក (Team Users) និងតុ (Tables)\n\n☕ Barista (អ្នកឆុងកាហ្វេ & លក់):\n• ផ្តោតលើផ្ទាំង POS លក់ភេសជ្ជៈ ជ្រើសរើសតុ និងទូទាត់ប្រាក់\n• ជាប់កម្រិត Middleware 'PreventBaristaAccess' មិនអាចកែស្តុក ឬរូបមន្តបានឡើយ (403 Forbidden)`
+            },
+            {
+                number: 6,
+                speaker: "Speaker 2",
+                title: "ផ្ទាំងបញ្ជាលក់ POS (Point of Sale Interface)",
+                subtitle: "លឿន រលូន និងងាយស្រួលប្រើប្រាស់",
+                content: `• Single-Page Experience:\n  - រចនាឡើងជាមួយ Alpine.js សម្រាប់អេក្រង់ Touch Screen បញ្ជាកុម្ម៉ង់រហ័ស គ្មានការ Reload Page\n\n• Product Variants ទំនើប:\n  - គាំទ្រជម្រើសទំហំ (Regular / Large) និងប្រភេទ (Hot / Iced)\n  - តម្លៃផ្លាស់ប្តូរស្វ័យប្រវត្តិតាម Variant និងភ្ជាប់ទៅកាន់រូបមន្តកាត់ស្តុកខុសៗគ្នា\n\n• Auto Cart Calculations:\n  - គណនា Subtotal, Discount, និង Tax/VAT ដោយស្វ័យប្រវត្តិ ទាំងប្រាក់ដុល្លារ ($) និងប្រាក់រៀល (៛)`
+            },
+            {
+                number: 7,
+                speaker: "Speaker 2",
+                title: "ការគ្រប់គ្រងតុ (Table Management)",
+                subtitle: "Dine-In (ញ៉ាំក្នុងហាង) vs Takeaway (ខ្ចប់ទៅផ្ទះ)",
+                content: `🟢 Dine-In (ញ៉ាំក្នុងហាង):\n• ជ្រើសរើសលេខតុតាមប្លង់ជាក់ស្តែង\n• ស្ថានភាពតុច្បាស់លាស់: Available (ទំនេរ 🟢) vs Occupied (មានភ្ញៀវ 🔴)\n• នៅពេល Checkout រួចរាល់ ប្រព័ន្ធប្តូរស្ថានភាពតុទៅជា 'Occupied' ដោយស្វ័យប្រវត្តិ\n\n🟡 Takeaway (ខ្ចប់ទៅផ្ទះ):\n• សម្រាប់អតិថិជនទិញយកទៅផ្ទះ (Grab & Go)\n• រំលងការជ្រើសរើសតុដោយស្វ័យប្រវត្តិ (Bypasses Table Selection)\n• បង្ហាញលើវិក្កយបត្រយ៉ាងច្បាស់ថាជាការខ្ចប់ទៅផ្ទះ`
+            },
+            {
+                number: 8,
+                speaker: "Speaker 2",
+                title: "ការទូទាត់ប្រាក់ & វិក្កយបត្រ (Payments & Receipts)",
+                subtitle: "គាំទ្រវិធីសាស្ត្រទូទាត់ពេញនិយមបំផុតនៅកម្ពុជា",
+                content: `💵 សាច់ប្រាក់ (Cash):\n• វាយបញ្ចូលចំនួនប្រាក់ទទួល -> ប្រព័ន្ធគណនាប្រាក់អាប់ជូនភ្លាមៗ ($ & ៛)\n\n🇰🇭 Bakong KHQR (National Standard):\n• បង្កើត Dynamic QR Code តាមស្ដង់ដារជាតិរបស់ធនាគារជាតិនៃកម្ពុជា (NBC)\n• អតិថិជនអាចស្កេនទូទាត់បានគ្រប់ធនាគារ (ABA, ACLEDA, Canadia, etc.)\n\n🧾 វិក្កយបត្រកម្ដៅ (Thermal Receipt 80mm):\n• បង្ហាញឈ្មោះហាង, កាលបរិច្ឆេទ, លេខតុ, បញ្ជីមុខទំនិញ, ពន្ធ, និង QR Code សម្រាប់ផ្ទៀងផ្ទាត់`
+            },
+            {
+                number: 9,
+                speaker: "Speaker 3",
+                title: "ស្ថាបត្យកម្មរូបមន្ត (Recipe BOM Architecture)",
+                subtitle: "ស្ពានភ្ជាប់រវាងការលក់ភេសជ្ជៈ និងការកាត់ស្តុកគ្រឿងផ្សំ",
+                content: `Product (Latte) ➔ Variant (Iced Large) ➔ Recipe (BOM) ➔ Raw Ingredients\n\n• ឧទាហរណ៍រូបមន្ត Iced Latte Large (1 កែវ):\n  - ☕ Coffee Beans = 18.0 g\n  - 🥛 Fresh Milk = 150.0 ml\n  - 🍯 Vanilla Syrup = 10.0 ml\n  - 🥤 Cup, Lid & Straw = 1.0 pcs\n\n• ផលជះលើស្តុកពេលលក់:\n  - លក់បាន ១ កែវ ➔ កាត់កាហ្វេ -18g, ទឹកដោះគោ -150ml\n  - លក់បាន ២ កែវ ➔ កាត់កាហ្វេ -36g, ទឹកដោះគោ -300ml`
+            },
+            {
+                number: 10,
+                speaker: "Speaker 3",
+                title: "សេវាកម្មកាត់ស្តុក (InventoryService Engine)",
+                subtitle: "បេះដូងនៃប្រព័ន្ធគ្រប់គ្រងស្តុកដោយស្វ័យប្រវត្តិ",
+                content: `🛡️ Atomic DB Transactions:\n• រាល់ការលក់ និងកាត់ស្តុករុំព័ទ្ធក្នុង DB::transaction() -> បើមាន Error គឺ Rollback ភ្លាម មិនឱ្យខូចស្តុកឡើយ\n\n🔒 Duplicate Deduction Guard:\n• ពិនិត្យ Column 'inventory_deducted_at' -> ការពារការកាត់ស្តុកជាន់គ្នាដាច់ខាត ទោះបីចុច Checkout ២ ដងក៏ដោយ\n\n⚖️ Safe Unit Conversion Engine:\n• បំប្លែងខ្នាតរង្វាស់ដោយសុវត្ថិភាព (kg ↔ g, L ↔ ml)\n\n📦 គាំទ្រទាំង Prepared Drinks (ឆុង) និង Retail Packaged Goods (នំ/កំប៉ុង)`
+            },
+            {
+                number: 11,
+                speaker: "Speaker 3",
+                title: "ថ្លៃដើម & ប្រាក់ចំណេញ (Costing & Margins)",
+                subtitle: "ការគណនាថ្លៃដើម (COGS) និង Gross Profit Margin %",
+                content: `• រូបមន្តគណនាថ្លៃដើមគ្រឿងផ្សំ (Line Cost):\n  Line Cost = Recipe Quantity × Ingredient Average Cost\n\n• រូបមន្តគណនាភាគរយចំណេញដុល (Gross Margin %):\n  Gross Margin % = ((Selling Price - Total Recipe Cost) / Selling Price) × 100\n\n• ការគណនាជាក់ស្តែងលើ Iced Latte Large:\n  - តម្លៃលក់ (Selling Price): $3.50\n  - ថ្លៃដើមគ្រឿងផ្សំ (Recipe Cost): $0.82\n  - ភាគរយចំណេញដុល (Gross Margin): 76.5% (ចំណេញខ្ពស់)`
+            },
+            {
+                number: 12,
+                speaker: "Speaker 4",
+                title: "ការទិញទំនិញចូលស្តុក (Purchases / GRN)",
+                subtitle: "ការគ្រប់គ្រងការនាំចូលស្តុកតាម Goods Received Notes",
+                content: `🏢 Supplier Management:\n• គ្រប់គ្រងបញ្ជីអ្នកផ្គត់ផ្គង់ លេខទូរស័ព្ទ អ៊ីមែល និងអាសយដ្ឋាន\n\n📦 Batch Number & Expiry Tracking:\n• រាល់ការទិញចូលតម្រូវឱ្យកត់ត្រាលេខបាច់ និងថ្ងៃផុតកំណត់ ដើម្បីអនុវត្តគោលការណ៍ FIFO (First-In, First-Out)\n\n📊 Weighted Moving Average Costing:\n• គណនាថ្លៃដើមជាមធ្យមដោយស្វ័យប្រវត្តិនូវរាល់ពេលទំនិញថ្មីចូលមកក្នុងតម្លៃខុសពីមុន\nNew Avg Cost = [(Old Qty × Old Cost) + (New Qty × New Cost)] / [Old Qty + New Qty]`
+            },
+            {
+                number: 13,
+                speaker: "Speaker 4",
+                title: "ការកែសម្រួលស្តុក (Adjustments & Waste)",
+                subtitle: "គ្រប់គ្រងការបាត់បង់ និងការខូចខាតជាក់ស្តែងក្នុងហាង",
+                content: `🗑️ Waste / Spoilage (ការខូចខាត):\n• សម្រាប់ទឹកដោះគោកំពប់, គ្រាប់កាហ្វេហួសកំណត់, ឬការឆុងខុស (កាត់ចេញពីស្តុកជាបន្ទាន់)\n\n⚙️ Calibration Loss (ការតេស្តកិនកាហ្វេ):\n• ការកិនគ្រាប់កាហ្វេតេស្តម៉ាស៊ីន (Dial-in Espresso) រៀងរាល់ព្រឹក ដើម្បីគុណភាពកាហ្វេ\n\n📋 Stocktake Recount (ការរាប់ស្តុកជាក់ស្តែង):\n• ការរាប់ស្តុកជាក់ស្តែងប្រចាំខែ (Variance Adjustment) ដើម្បីតម្រឹមចំនួនក្នុងប្រព័ន្ធឱ្យស្មើនឹងរបស់ពិត\n\n⚡ 1-Click Reason Presets:\n• មានប៊ូតុងជ្រើសរើសមូលហេតុរហ័ស (Expired, Spilled, Tasting, Calibration)`
+            },
+            {
+                number: 14,
+                speaker: "Speaker 4",
+                title: "របាយការណ៍ស្តុក & ការវិភាគ (Inventory Analytics)",
+                subtitle: "តាមដានសុខភាពអាជីវកម្មតាមពេលវេលាជាក់ស្តែង",
+                content: `💰 Asset Valuation Report (តម្លៃទ្រព្យស្តុក):\n• គណនាតម្លៃទ្រព្យសរុបនៃគ្រាប់កាហ្វេ និងគ្រឿងផ្សំទាំងអស់ដែលមានក្នុងហាងជាទឹកប្រាក់ដុល្លារ ($) តាម Weighted Average Cost\n\n⏰ Batch Expiry Tracking (ការតាមដានថ្ងៃផុតកំណត់):\n• តាមដានគ្រឿងផ្សំណាខ្លះដែលផុតកំណត់ ឬជិតផុតកំណត់ក្នុងរង្វង់ ៧ ថ្ងៃ ដើម្បីឱ្យបុគ្គលិកប្រញាប់ប្រើប្រាស់មុន\n\n🔔 Low Stock Alerts (ការជូនដំណឹងស្តុកទាប):\n• ជូនដំណឹងពណ៌លឿងភ្លាមៗពេលគ្រឿងផ្សំណាធ្លាក់ចុះក្រោម Reorder Point ជួយកុំឱ្យដាច់ស្តុកពេលភ្ញៀវច្រើន`
+            },
+            {
+                number: 15,
+                speaker: "Speaker 4",
+                title: "ការធានាគុណភាពកូដ (Automated Pest Tests)",
+                subtitle: "៦២ Automated Tests ឆ្លងកាត់ជោគជ័យ ១០០% (Passing Green)",
+                content: `🧪 Pest PHP Test Suite:\n• Tests\\Feature\\InventoryServiceTest (តេស្តកាត់ស្តុក និងបំប្លែងខ្នាត)\n• Tests\\Feature\\StockManagementTest (តេស្ត Stock In, Adjust, និង Moving Average Cost)\n• Tests\\Feature\\TableManagementTest (តេស្ត Dine-in និងស្ថានភាពតុ)\n• Tests\\Feature\\PosTest (តេស្តការ Checkout និងការគណនាកន្ត្រក)\n\n✨ Laravel Pint PSR-12 Standard:\n• កូដទាំងអស់ត្រូវបាន Format តាមស្ដង់ដារស្អាតឥតខ្ចោះ គ្មាន Syntax Error\n\n🟢 លទ្ធផល: 62 passed (195 assertions) • 100% Green`
+            },
+            {
+                number: 16,
+                speaker: "Team Presentation",
+                title: "សេចក្តីសន្និដ្ឋាន & Live Demo (Q&A)",
+                subtitle: "Bong Heng Café POS — ដំណោះស្រាយកម្រិត Enterprise",
+                content: `☕ លក់រហ័ស (Fast Touch POS + Bakong KHQR)\n📦 គ្រប់គ្រងស្តុកច្បាស់លាស់ (Recipe BOM Auto-deduction + Moving Average Cost)\n🛡️ សុវត្ថិភាពខ្ពស់ (Atomic Transactions + 62 Automated Tests)\n\n🚀 ដល់ពេល LIVE DEMO & សួរសំណួរ (Q&A)\n• បើកដំណើរការផ្ទាំង Point of Sale (POS): http://127.0.0.1:8000/pos\n• បើកដំណើរការផ្ទាំង Stock & Inventory: http://127.0.0.1:8000/admin/stock\n• បើកដំណើរការផ្ទាំង Recipes & Costing: http://127.0.0.1:8000/admin/recipes\n\n🙏 សូមអរគុណលោកគ្រូ អ្នកគ្រូ និងគណៈកម្មការទាំងអស់គ្នា!`
+            }
+        ];
+
+        // Populate Slide Cards
+        const container = document.getElementById('slides-cards-container');
+        canvaSlidesData.forEach((s) => {
+            const card = document.createElement('div');
+            card.className = "glass-card rounded-2xl p-5 border border-white/10 space-y-3";
+            card.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <div class="flex items-center gap-3">
+                        <span class="h-7 w-7 rounded-lg bg-amber-500/20 text-amber-400 font-bold font-mono text-xs flex items-center justify-center">
+                            ${String(s.number).padStart(2, '0')}
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-bold text-white font-khmer">${s.title}</h3>
+                            <p class="text-xs text-stone-400">${s.subtitle}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 rounded-full bg-stone-900 border border-white/10 text-[10px] text-amber-400 font-semibold">${s.speaker}</span>
+                        <button onclick="copySingleSlide(${s.number})" class="px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-amber-600 hover:text-stone-950 border border-white/10 text-xs font-bold text-stone-300 transition flex items-center gap-1.5">
+                            <span>📋 Copy Slide</span>
+                        </button>
+                    </div>
+                </div>
+                <pre class="text-xs text-stone-300 font-khmer whitespace-pre-wrap leading-relaxed bg-black/40 p-4 rounded-xl border border-white/5">${s.content}</pre>
+            `;
+            container.appendChild(card);
+        });
+
+        // Copy Single Slide
+        function copySingleSlide(slideNum) {
+            const slide = canvaSlidesData.find(s => s.number === slideNum);
+            if (!slide) return;
+            const textToCopy = `${slide.title}\n${slide.subtitle}\n\n${slide.content}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast(`Copied Slide ${slideNum} to clipboard!`);
+            });
+        }
+
+        // Copy All Markdown Content for Canva Docs
+        function copyAllMarkdown() {
+            let fullText = "# Bong Heng Café POS & Inventory Management System\n\n";
+            canvaSlidesData.forEach(s => {
+                fullText += `## SLIDE ${s.number}: ${s.title}\n### ${s.subtitle}\n*Speaker: ${s.speaker}*\n\n${s.content}\n\n---\n\n`;
+            });
+            navigator.clipboard.writeText(fullText).then(() => {
+                document.getElementById('copy-all-text').textContent = "All 16 Slides Copied!";
+                document.getElementById('copy-all-icon').textContent = "✓";
+                showToast("All 16 slides copied! Ready to paste into Canva Docs!");
+                setTimeout(() => {
+                    document.getElementById('copy-all-text').textContent = "Copy All 16 Slides";
+                    document.getElementById('copy-all-icon').textContent = "📋";
+                }, 3000);
+            });
+        }
+
+        // Copy Color Hex
+        function copyColor(hex) {
+            navigator.clipboard.writeText(hex).then(() => {
+                showToast(`Copied ${hex} to clipboard!`);
+            });
+        }
+
+        // Toast display
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>

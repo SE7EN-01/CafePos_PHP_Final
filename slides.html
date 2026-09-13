@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bong Heng Café POS & Inventory — Presentation Slide Deck</title>
+    <!-- Google Fonts: Kantumruy Pro for Khmer & Plus Jakarta Sans for English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Tailwind CDN for high-end styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', '"Kantumruy Pro"', 'sans-serif'],
+                        khmer: ['"Kantumruy Pro"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        stone: {
+                            850: '#1c1917',
+                            900: '#171412',
+                            950: '#0c0a09',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Kantumruy Pro', sans-serif;
+            background-color: #0c0a09;
+            color: #f5f5f4;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .slide {
+            display: none;
+            opacity: 0;
+            transform: scale(0.98) translateY(10px);
+            transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        .glass-card {
+            background: rgba(28, 25, 23, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card-amber {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(28, 25, 23, 0.7));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .glow-amber {
+            box-shadow: 0 0 35px -5px rgba(245, 158, 11, 0.25);
+        }
+
+        .glow-emerald {
+            box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.25);
+        }
+
+        /* Custom scrollbar for speaker notes */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(245, 158, 11, 0.4);
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen relative flex flex-col justify-between p-4 md:p-8 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-amber-950/20 via-stone-950 to-black">
+
+    <!-- Top Status Bar & Progress Indicator -->
+    <header class="w-full z-20 flex items-center justify-between pb-3 border-b border-white/10">
+        <div class="flex items-center gap-3">
+            <div class="h-8 w-8 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm shadow-inner">
+                ☕
+            </div>
+            <div>
+                <h1 class="text-xs md:text-sm font-bold tracking-wide uppercase text-stone-200 font-sans">Bong Heng Café POS & Inventory</h1>
+                <p class="text-[10px] md:text-xs text-amber-400/80 font-khmer font-medium">ប្រព័ន្ធគ្រប់គ្រងការលក់ និងស្តុកហាងកាហ្វេ</p>
+            </div>
+        </div>
+
+        <!-- Speaker Indicator Badge -->
+        <div id="speaker-badge" class="px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 border transition-all duration-300">
+            <span id="speaker-dot" class="h-2 w-2 rounded-full animate-pulse"></span>
+            <span id="speaker-name" class="tracking-wide">Speaker 1: Introduction</span>
+        </div>
+
+        <!-- Timer & Slide Controls -->
+        <div class="flex items-center gap-2 md:gap-3">
+            <div class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-xl bg-stone-900/80 border border-white/10 font-mono text-xs text-stone-300">
+                <span class="text-amber-400">⏱</span>
+                <span id="timer-display">00:00</span>
+            </div>
+            <button onclick="toggleNotes()" class="px-2.5 py-1 rounded-xl bg-stone-900 border border-white/10 text-xs font-semibold text-stone-300 hover:text-white hover:border-amber-400/50 transition flex items-center gap-1.5" title="Toggle Speaker Script (Press 'N')">
+                <span>📝 Script</span>
+            </button>
+            <button onclick="toggleFullscreen()" class="px-2.5 py-1 rounded-xl bg-stone-900 border border-white/10 text-xs font-semibold text-stone-300 hover:text-white hover:border-amber-400/50 transition" title="Toggle Fullscreen (Press 'F')">
+                <span>⛶</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Top Progress Bar -->
+    <div class="w-full bg-stone-900/80 h-1 rounded-full overflow-hidden my-2 border border-white/5">
+        <div id="progress-bar" class="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-500 h-full transition-all duration-300" style="width: 6.25%;"></div>
+    </div>
+
+    <!-- MAIN SLIDE CONTAINER -->
+    <main class="flex-1 w-full max-w-7xl mx-auto flex items-center justify-center relative overflow-hidden py-2">
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 1: COVER / TITLE -->
+        <!-- ========================================================== -->
+        <div class="slide active flex-col items-center justify-center text-center space-y-6 w-full max-w-4xl" data-speaker="1" data-speaker-name="Speaker 1: Introduction" data-color="amber">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-bold uppercase tracking-widest">
+                <span>Final Capstone Defense 2026</span>
+            </div>
+            
+            <h1 class="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight font-sans">
+                Bong Heng Café <br>
+                <span class="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent font-khmer">
+                    ប្រព័ន្ធគ្រប់គ្រងការលក់ និងស្តុក
+                </span>
+            </h1>
+
+            <p class="text-sm md:text-base text-stone-300 max-w-2xl font-khmer leading-relaxed">
+                ស្ថាបត្យកម្មប្រព័ន្ធលក់រហ័ស (POS) ភ្ជាប់ជាមួយការកាត់ស្តុកគ្រាប់កាហ្វេ និងគ្រឿងផ្សំស្វ័យប្រវត្តិតាមរូបមន្ត (Recipe BOM) ជាមួយការទូទាត់ជាតិ Bakong KHQR
+            </p>
+
+            <!-- 4 Presenter Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full pt-4">
+                <div class="glass-card rounded-2xl p-3.5 border-amber-500/20 text-left">
+                    <span class="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Speaker 1</span>
+                    <h3 class="text-xs font-bold text-white mt-1">សេចក្តីផ្តើម & Tech Stack</h3>
+                    <p class="text-[11px] text-stone-400 mt-0.5">Architecture & Roles</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3.5 border-amber-500/20 text-left">
+                    <span class="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Speaker 2</span>
+                    <h3 class="text-xs font-bold text-white mt-1">POS & ការទូទាត់</h3>
+                    <p class="text-[11px] text-stone-400 mt-0.5">Tables & Bakong KHQR</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3.5 border-amber-500/20 text-left">
+                    <span class="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Speaker 3</span>
+                    <h3 class="text-xs font-bold text-white mt-1">រូបមន្ត & កាត់ស្តុក</h3>
+                    <p class="text-[11px] text-stone-400 mt-0.5">Recipe BOM & Costing</p>
+                </div>
+                <div class="glass-card rounded-2xl p-3.5 border-amber-500/20 text-left">
+                    <span class="text-[10px] font-bold text-amber-400 tracking-wider uppercase">Speaker 4</span>
+                    <h3 class="text-xs font-bold text-white mt-1">ទិញចូល & របាយការណ៍</h3>
+                    <p class="text-[11px] text-stone-400 mt-0.5">GRN, Waste & Pest Tests</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 2: AGENDA -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="1" data-speaker-name="Speaker 1: Introduction" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Presentation Roadmap</span>
+                <h2 class="text-2xl md:text-4xl font-extrabold text-white mt-1 font-khmer">មាតិកា និងរបៀបវារៈនៃបទបង្ហាញ (Agenda)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-500 flex gap-4 items-start">
+                    <div class="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center shrink-0">01</div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white font-khmer">ផ្នែកទី ១: សេចក្តីផ្តើម & ស្ថាបត្យកម្មប្រព័ន្ធ</h3>
+                        <p class="text-xs text-stone-400 mt-1 font-khmer">បញ្ហាប្រឈមក្នុងហាងកាហ្វេទូទៅ, Laravel 12 + PHP 8.4, PostgreSQL, និងការបែងចែកសិទ្ធិ (Admin & Barista)។</p>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-500 flex gap-4 items-start">
+                    <div class="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center shrink-0">02</div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white font-khmer">ផ្នែកទី ២: ដំណើរការលក់ (POS) & ការទូទាត់</h3>
+                        <p class="text-xs text-stone-400 mt-1 font-khmer">Touch POS Interface, Variants (Hot/Iced, Regular/Large), Table Management (Dine-in/Takeaway), និង Bakong KHQR។</p>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-500 flex gap-4 items-start">
+                    <div class="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center shrink-0">03</div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white font-khmer">ផ្នែកទី ៣: រូបមន្តភេសជ្ជៈ & Auto-Deduction Engine</h3>
+                        <p class="text-xs text-stone-400 mt-1 font-khmer">ស្ថាបត្យកម្ម Recipe BOM, InventoryService (Atomic DB Transaction), ការបំប្លែងខ្នាត (g/ml), និង Duplicate Guard។</p>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-l-4 border-amber-500 flex gap-4 items-start">
+                    <div class="h-10 w-10 rounded-xl bg-amber-500/20 text-amber-400 font-bold flex items-center justify-center shrink-0">04</div>
+                    <div>
+                        <h3 class="text-sm font-bold text-white font-khmer">ផ្នែកទី ៤: ទិញចូល (GRN), របាយការណ៍ & Testing</h3>
+                        <p class="text-xs text-stone-400 mt-1 font-khmer">Purchases តាម Batch/Expiry, Moving Average Cost, ការកត់ត្រាការខូចខាត (Waste), Asset Valuation, និង Pest 62 Tests។</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 3: SPEAKER 1 - PROBLEMS -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="1" data-speaker-name="Speaker 1: Problems" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 1 • Problem Analysis</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">បញ្ហាប្រឈមជាក់ស្តែងក្នុងប្រតិបត្តិការហាងកាហ្វេ</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-rose-500 space-y-2">
+                    <div class="h-10 w-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg font-bold">📉</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">បាត់បង់ស្តុកដោយមិនដឹងខ្លួន</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        គ្រាប់កាហ្វេ ទឹកដោះគោ និងស៊ីរ៉ូ ត្រូវបានប្រើប្រាស់លើសកម្រិតកំណត់ ឬកំពប់ខូចខាត ដោយគ្មានប្រព័ន្ធកត់ត្រាច្បាស់លាស់តាមកែវនីមួយៗ។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-rose-500 space-y-2">
+                    <div class="h-10 w-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg font-bold">💲</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">មិនដឹងថ្លៃដើមពិត (COGS)</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ម្ចាស់ហាងពិបាកកំណត់ថាក្នុងមួយកែវចំណាយថ្លៃគ្រឿងផ្សំអស់ប៉ុន្មានដុល្លារ ធ្វើឱ្យការកំណត់តម្លៃលក់ និងការគណនាប្រាក់ចំណេញខ្វះភាពសុក្រឹត។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-rose-500 space-y-2">
+                    <div class="h-10 w-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-lg font-bold">⏳</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">ការទូទាត់ និងតុយឺតយ៉ាវ</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ការគ្រប់គ្រងតុត្រូវកត់លើក្រដាស ការទូទាត់ប្រាក់ខ្វះ QR កូដស្ដង់ដារជាតិ (Bakong KHQR) ធ្វើឱ្យអតិថិជនរង់ចាំយូរនៅមុខបញ្ជរ។
+                    </p>
+                </div>
+            </div>
+
+            <!-- Solution Banner -->
+            <div class="glass-card-amber rounded-2xl p-4 flex items-center gap-4">
+                <div class="h-10 w-10 rounded-xl bg-amber-500 text-stone-950 font-bold flex items-center justify-center text-xl shrink-0">✓</div>
+                <div>
+                    <h4 class="text-xs font-bold text-amber-300 font-khmer">ដំណោះស្រាយរួមក្នុងប្រព័ន្ធ Bong Heng Café:</h4>
+                    <p class="text-xs text-stone-300 font-khmer">ប្រព័ន្ធ POS រហ័ស និងទំនើប ភ្ជាប់ដោយស្វ័យប្រវត្តិនូវរាល់ការលក់ទៅកាន់រូបមន្ត Recipe BOM ដើម្បីកាត់ស្តុកគ្រាប់កាហ្វេ និងទឹកដោះគោតាមមីលីលីត្រ និងក្រាមភ្លាមៗ។</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 4: SPEAKER 1 - TECH STACK -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="1" data-speaker-name="Speaker 1: Architecture" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 1 • Technical Foundation</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">បច្ចេកវិទ្យា & ស្ថាបត្យកម្មប្រព័ន្ធ (Technology Stack)</h2>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card rounded-2xl p-4 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-red-400">Backend</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-300">v12</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Laravel 12</h3>
+                    <p class="text-xs text-stone-400 font-mono">PHP 8.4 runtime, Strict Types, Service Container</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-blue-400">Database</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-300">ACID</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">PostgreSQL</h3>
+                    <p class="text-xs text-stone-400 font-mono">JSONB, decimal(10,4) high-precision costing</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-cyan-400">Frontend</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300">Modern</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Tailwind + Alpine</h3>
+                    <p class="text-xs text-stone-400 font-mono">Responsive, Glassmorphism, Zero-lag Reactive UX</p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 border border-white/10 space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-emerald-400">Quality</span>
+                        <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">62 Tests</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Pest PHP + Pint</h3>
+                    <p class="text-xs text-stone-400 font-mono">100% Passing Tests, PSR-12 Clean Code Style</p>
+                </div>
+            </div>
+
+            <!-- Architecture Flow Diagram -->
+            <div class="glass-card rounded-2xl p-4 border border-amber-500/20 flex flex-col md:flex-row items-center justify-between gap-2 text-center text-xs font-mono">
+                <div class="px-4 py-2 rounded-xl bg-stone-900 border border-white/10 text-stone-300">Client / Browser (Alpine.js)</div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-300">CheckoutController</div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300">InventoryService (DB Transaction)</div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-stone-900 border border-white/10 text-stone-300">PostgreSQL (Atomic Commit)</div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 5: SPEAKER 1 - USER ROLES -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="1" data-speaker-name="Speaker 1: User Roles" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 1 • Security & Access Control</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការបែងចែកសិទ្ធិប្រើប្រាស់ (Role-Based Access Control)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Admin Card -->
+                <div class="glass-card-amber rounded-3xl p-6 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-amber-500 text-stone-950 font-bold flex items-center justify-center">👑</div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">Administrator (អ្នកគ្រប់គ្រង)</h3>
+                                <p class="text-xs text-amber-400 font-mono">Role: admin</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold">Full Access</span>
+                    </div>
+
+                    <ul class="space-y-2 text-xs text-stone-300 font-khmer">
+                        <li class="flex items-center gap-2">✓ គ្រប់គ្រងមុខទំនិញ ប្រភេទ និងរូបមន្ត (Recipes & Costing)</li>
+                        <li class="flex items-center gap-2">✓ គ្រប់គ្រងអ្នកផ្គត់ផ្គង់ និងការនាំចូលស្តុក (Purchases / GRN)</li>
+                        <li class="flex items-center gap-2">✓ កែសម្រួលស្តុក និងកត់ត្រាការខូចខាត (Stock Adjust / Waste)</li>
+                        <li class="flex items-center gap-2">✓ ពិនិត្យរបាយការណ៍ហិរញ្ញវត្ថុ និងតម្លៃស្តុកសរុប (Reports)</li>
+                        <li class="flex items-center gap-2">✓ គ្រប់គ្រងគណនីបុគ្គលិក (Team Users) និងតុ (Tables)</li>
+                    </ul>
+                </div>
+
+                <!-- Barista Card -->
+                <div class="glass-card rounded-3xl p-6 space-y-4 border-l-4 border-emerald-500">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold flex items-center justify-center">☕</div>
+                            <div>
+                                <h3 class="text-base font-bold text-white">Barista (អ្នកឆុងកាហ្វេ & លក់)</h3>
+                                <p class="text-xs text-emerald-400 font-mono">Role: barista</p>
+                            </div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold">POS Only</span>
+                    </div>
+
+                    <ul class="space-y-2 text-xs text-stone-300 font-khmer">
+                        <li class="flex items-center gap-2">✓ ដំណើរការលក់នៅបញ្ជរ (Fast POS Interface)</li>
+                        <li class="flex items-center gap-2">✓ ជ្រើសរើសប្រភេទតុ (Dine-in / Takeaway)</li>
+                        <li class="flex items-center gap-2">✓ ទទួលការទូទាត់តាម Cash & Bakong KHQR</li>
+                        <li class="flex items-center gap-2">✓ បោះពុម្ពវិក្កយបត្រ (Thermal Receipt) ជូនអតិថិជន</li>
+                        <li class="flex items-center gap-2 text-rose-400">✗ ជាប់កម្រិត Middleware `PreventBaristaAccess` មិនអាចកែស្តុក ឬរូបមន្តបានឡើយ (403 Forbidden)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 6: SPEAKER 2 - POS WORKFLOW -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="2" data-speaker-name="Speaker 2: POS Interface" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 2 • Point of Sale Experience</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ផ្ទាំងបញ្ជាលក់ (Fast Touch-Friendly POS Interface)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-amber-500/20">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Fast UI/UX</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">ប្រតិបត្តិការលឿនគ្មាន Reload</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        រចនាឡើងជាមួយ Alpine.js សម្រាប់អេក្រង់ Touch Screen ដំណើរការរលូន បញ្ជាទិញ និងកែសម្រួលកន្ត្រកទំនិញ (Cart) ភ្លាមៗដោយគ្មានភាពរអាក់រអួល។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-amber-500/20">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Product Variants</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">គ្រប់គ្រងជម្រើសភេសជ្ជៈ</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        គាំទ្រជម្រើសកែវ (Regular / Large, Hot / Iced)។ តម្លៃផ្លាស់ប្តូរស្វ័យប្រវត្តិតាម Variant និងភ្ជាប់ទៅកាន់រូបមន្តកាត់ស្តុកខុសៗគ្នា។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-amber-500/20">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Cart Calculations</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">ការគណនាស្វ័យប្រវត្តិ</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        គណនា Subtotal, Discount, និង Tax/VAT ដោយស្វ័យប្រវត្តិ ទាំងប្រាក់ដុល្លារ ($) និងប្រាក់រៀល (KHR) តាមអត្រាប្តូរប្រាក់បច្ចុប្បន្ន។
+                    </p>
+                </div>
+            </div>
+
+            <!-- Visual Feature Preview -->
+            <div class="glass-card rounded-2xl p-4 flex items-center justify-around border border-white/10 text-center">
+                <div>
+                    <span class="text-xl font-bold font-mono text-amber-400">Coffee</span>
+                    <p class="text-[11px] text-stone-400 font-khmer">Espresso, Latte, Americano</p>
+                </div>
+                <div class="h-8 w-px bg-white/10"></div>
+                <div>
+                    <span class="text-xl font-bold font-mono text-amber-400">Non-Coffee</span>
+                    <p class="text-[11px] text-stone-400 font-khmer">Matcha, Tonic, Chocolate</p>
+                </div>
+                <div class="h-8 w-px bg-white/10"></div>
+                <div>
+                    <span class="text-xl font-bold font-mono text-amber-400">Bakery & Retail</span>
+                    <p class="text-[11px] text-stone-400 font-khmer">Croissant, Bottled Beans</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 7: SPEAKER 2 - TABLE MANAGEMENT -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="2" data-speaker-name="Speaker 2: Tables" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 2 • Dining Workflow</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការគ្រប់គ្រងតុ (Dine-In vs Takeaway Table Management)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="glass-card rounded-3xl p-5 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full bg-emerald-400"></span>
+                        <h3 class="text-sm font-bold text-white font-khmer">Dine-In (ញ៉ាំក្នុងហាង)</h3>
+                    </div>
+                    <p class="text-xs text-stone-300 font-khmer leading-relaxed">
+                        នៅពេលអតិថិជនមកពិសាក្នុងហាង បុគ្គលិកអាចជ្រើសរើសលេខតុតាមប្លង់ជាក់ស្តែង។
+                    </p>
+                    <div class="p-3 rounded-xl bg-stone-900/80 border border-white/10 space-y-2 text-xs font-mono">
+                        <div class="flex items-center justify-between text-emerald-400">
+                            <span>Status: Available</span>
+                            <span>🟢 តុទំនេរ អាចកុម្ម៉ង់បាន</span>
+                        </div>
+                        <div class="flex items-center justify-between text-rose-400">
+                            <span>Status: Occupied</span>
+                            <span>🔴 តុមានភ្ញៀវ កំពុងញ៉ាំ</span>
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-amber-400 font-khmer">
+                        ★ ពេល Checkout ជោគជ័យ ប្រព័ន្ធប្តូរស្ថានភាពតុទៅជា 'Occupied' ដោយស្វ័យប្រវត្តិ។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-3xl p-5 space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="h-3 w-3 rounded-full bg-amber-400"></span>
+                        <h3 class="text-sm font-bold text-white font-khmer">Takeaway (ខ្ចប់ទៅផ្ទះ)</h3>
+                    </div>
+                    <p class="text-xs text-stone-300 font-khmer leading-relaxed">
+                        សម្រាប់អតិថិជនមកទិញយកទៅផ្ទះ (Grab & Go):
+                    </p>
+                    <div class="p-3 rounded-xl bg-stone-900/80 border border-white/10 space-y-2 text-xs font-khmer text-stone-300">
+                        <p>• មិនបាច់ជ្រើសរើសលេខតុឡើយ (Bypasses Table Selection)</p>
+                        <p>• រក្សាទុកក្នុង Order ជាប្រភេទ <code class="font-mono text-amber-400">takeaway</code></p>
+                        <p>• បង្ហាញលើវិក្កយបត្រយ៉ាងច្បាស់ថាជាការខ្ចប់ទៅផ្ទះ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 8: SPEAKER 2 - PAYMENTS & KHQR -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="2" data-speaker-name="Speaker 2: Payments" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 2 • Modern Settlement</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការទូទាត់ប្រាក់ (Cash & Bakong KHQR) និងវិក្កយបត្រ</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-4 space-y-3">
+                    <div class="text-2xl">💵</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">សាច់ប្រាក់ (Cash)</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        វាយចំនួនប្រាក់ដែលទទួល -> ប្រព័ន្ធគណនាប្រាក់អាប់ជូនភ្លាមៗទាំងប្រាក់ដុល្លារ ($) និងប្រាក់រៀល (៛)។
+                    </p>
+                </div>
+
+                <div class="glass-card-amber rounded-2xl p-4 space-y-3 border-amber-500/40">
+                    <div class="text-2xl">🇰🇭</div>
+                    <h3 class="text-sm font-bold text-amber-300 font-khmer">Bakong KHQR</h3>
+                    <p class="text-xs text-stone-300 font-khmer leading-relaxed">
+                        Dynamic KHQR ស្របតាមស្ដង់ដារជាតិរបស់ធនាគារជាតិនៃកម្ពុជា។ អតិថិជនស្កេនតាម App ធនាគារណាក៏បាន (ABA, ACLEDA, etc.)។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-3">
+                    <div class="text-2xl">🧾</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">Thermal Receipt</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ទម្រង់វិក្កយបត្រ 80mm កម្ដៅ បង្ហាញឈ្មោះហាង កាលបរិច្ឆេទ លេខតុ បញ្ជីទំនិញ VAT/Tax និង QR Code ផ្ទៀងផ្ទាត់។
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 9: SPEAKER 3 - RECIPE BOM -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="3" data-speaker-name="Speaker 3: Recipe BOM" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 3 • Inventory Foundation</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ស្ថាបត្យកម្មរូបមន្តផ្សំ (Recipe BOM Architecture)</h2>
+            </div>
+
+            <p class="text-xs md:text-sm text-stone-300 font-khmer">
+                នៅក្នុងហាងកាហ្វេ យើងមិនលក់គ្រាប់កាហ្វេ ឬទឹកដោះគោដោយផ្ទាល់ទេ តែយើងលក់ "Iced Latte"។ ដូច្នេះ រូបមន្ត (Recipe) គឺជាស្ពានភ្ជាប់រវាងទំនិញលក់ និងគ្រឿងផ្សំក្នុងស្តុក៖
+            </p>
+
+            <!-- Relational Chain -->
+            <div class="glass-card-amber rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center">
+                <div class="px-4 py-2 rounded-xl bg-stone-900 border border-white/10">
+                    <span class="text-xs text-stone-400">Product</span>
+                    <p class="text-sm font-bold text-white">Latte</p>
+                </div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-stone-900 border border-white/10">
+                    <span class="text-xs text-stone-400">Variant</span>
+                    <p class="text-sm font-bold text-white">Iced Large</p>
+                </div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-amber-500/20 border border-amber-500/40">
+                    <span class="text-xs text-amber-300">Recipe (BOM)</span>
+                    <p class="text-sm font-bold text-amber-400">5 Line Items</p>
+                </div>
+                <span class="text-amber-400 font-bold">➔</span>
+                <div class="px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40">
+                    <span class="text-xs text-emerald-300">Raw Ingredients</span>
+                    <p class="text-sm font-bold text-emerald-400">Beans, Milk, Cup...</p>
+                </div>
+            </div>
+
+            <!-- Example Table -->
+            <div class="glass-card rounded-2xl p-4 overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="text-stone-400 border-b border-white/10">
+                            <th class="pb-2">Ingredient</th>
+                            <th class="pb-2">Recipe Qty</th>
+                            <th class="pb-2">When POS Sells 1</th>
+                            <th class="pb-2">When POS Sells 2</th>
+                            <th class="pb-2">Stock Balance Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody class="font-mono divide-y divide-white/5 text-stone-200">
+                        <tr><td class="py-1.5 font-sans">Coffee Beans</td><td>18.0 g</td><td class="text-rose-400">-18 g</td><td class="text-rose-400">-36 g</td><td>Deducted from kg balance</td></tr>
+                        <tr><td class="py-1.5 font-sans">Whole Milk</td><td>150.0 ml</td><td class="text-rose-400">-150 ml</td><td class="text-rose-400">-300 ml</td><td>Deducted from Liters balance</td></tr>
+                        <tr><td class="py-1.5 font-sans">Vanilla Syrup</td><td>10.0 ml</td><td class="text-rose-400">-10 ml</td><td class="text-rose-400">-20 ml</td><td>Deducted from ml balance</td></tr>
+                        <tr><td class="py-1.5 font-sans">Paper Cup & Lid</td><td>1.0 pcs</td><td class="text-rose-400">-1 pcs</td><td class="text-rose-400">-2 pcs</td><td>Deducted from piece count</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 10: SPEAKER 3 - INVENTORY SERVICE -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="3" data-speaker-name="Speaker 3: Deduction Engine" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 3 • Core Engine Architecture</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">សេវាកម្មកាត់ស្តុកកណ្តាល (InventoryService Engine)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-emerald-500/30">
+                    <div class="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                        <span>🛡️</span>
+                        <span>Atomic Transaction</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white font-mono">DB::transaction()</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        រាល់ការលក់ និងកាត់ស្តុកត្រូវបានរុំព័ទ្ធក្នុង Transaction តែមួយ។ ប្រសិនបើមាន Error កណ្តាលទី វានឹង Rollback ភ្លាមៗ មិនធ្វើឱ្យបាត់បង់តុល្យភាពស្តុកឡើយ។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-amber-500/30">
+                    <div class="flex items-center gap-2 text-amber-400 text-xs font-bold">
+                        <span>🔒</span>
+                        <span>Duplicate Guard</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white font-mono">inventory_deducted_at</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ការពារការកាត់ស្តុកជាន់គ្នាដាច់ខាត ប្រសិនបើ Order ត្រូវបានកាត់រួចហើយ ប្រព័ន្ធនឹង Return ភ្លាមៗ ទោះបីចុចប៊ូតុង ២ ដងក៏ដោយ។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2 border-blue-500/30">
+                    <div class="flex items-center gap-2 text-blue-400 text-xs font-bold">
+                        <span>⚖️</span>
+                        <span>Safe Unit Conversion</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white font-mono">convertUnits()</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        បំប្លែងខ្នាតដោយសុវត្ថិភាព ឧទាហរណ៍ ស្តុកមានជា គីឡូក្រាម (kg) តែរូបមន្តប្រើជា ក្រាម (g) វានឹងចែកនឹង 1,000 ដោយស្វ័យប្រវត្តិ។
+                    </p>
+                </div>
+            </div>
+
+            <!-- Code Snippet Card -->
+            <div class="glass-card rounded-2xl p-3 border border-white/10 font-mono text-[11px] text-stone-300">
+                <span class="text-amber-400">// app/Services/InventoryService.php</span><br>
+                <span class="text-purple-400">if</span> ($order->inventory_deducted_at !== <span class="text-blue-400">null</span>) { <span class="text-stone-500">// Skip duplicate deduction</span><br>
+                &nbsp;&nbsp;&nbsp;&nbsp;<span class="text-purple-400">return false</span>;<br>
+                }<br>
+                $stockable->decrement(<span class="text-emerald-400">'current_stock'</span>, $deductQty);<br>
+                StockMovement::create([<span class="text-emerald-400">'type'</span> => <span class="text-emerald-400">'out'</span>, <span class="text-emerald-400">'reason'</span> => <span class="text-emerald-400">'POS Order #'</span> . $order->order_number]);
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 11: SPEAKER 3 - COSTING & MARGINS -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="3" data-speaker-name="Speaker 3: Costing & Margins" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 3 • Profitability Analysis</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការគណនាថ្លៃដើម (COGS) និងប្រាក់ចំណេញដុល (Gross Margin %)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 items-center">
+                <div class="space-y-4">
+                    <div class="glass-card rounded-2xl p-4 border-l-4 border-amber-500">
+                        <span class="text-xs text-stone-400 font-khmer">រូបមន្តគណនាថ្លៃដើមគ្រឿងផ្សំ:</span>
+                        <div class="text-sm font-bold font-mono text-amber-300 mt-1">
+                            Line Cost = Recipe Qty × Ingredient Avg Cost
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl p-4 border-l-4 border-emerald-500">
+                        <span class="text-xs text-stone-400 font-khmer">រូបមន្តគណនាភាគរយចំណេញដុល:</span>
+                        <div class="text-sm font-bold font-mono text-emerald-300 mt-1">
+                            Gross Margin % = ((Selling Price - Total Cost) / Selling Price) × 100
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Margin Simulation Card -->
+                <div class="glass-card-amber rounded-3xl p-6 space-y-4 text-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-400">ឧទាហរណ៍ជាក់ស្តែង: Iced Latte Large</span>
+                    <div class="grid grid-cols-3 gap-2 pt-2">
+                        <div class="p-3 rounded-xl bg-stone-900/80 border border-white/10">
+                            <span class="text-[10px] text-stone-400">Selling Price</span>
+                            <p class="text-lg font-bold font-mono text-white">$3.50</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-stone-900/80 border border-white/10">
+                            <span class="text-[10px] text-stone-400">Recipe Cost</span>
+                            <p class="text-lg font-bold font-mono text-rose-400">$0.82</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30">
+                            <span class="text-[10px] text-emerald-300">Gross Margin</span>
+                            <p class="text-lg font-bold font-mono text-emerald-400">76.5%</p>
+                        </div>
+                    </div>
+                    <p class="text-xs text-stone-300 font-khmer pt-2">
+                        ជួយឱ្យម្ចាស់ហាងដឹងពីប្រាក់ចំណេញច្បាស់លាស់មុនពេលសម្រេចចិត្តកំណត់តម្លៃលក់លើ Menu។
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 12: SPEAKER 4 - PURCHASES & GRN -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="4" data-speaker-name="Speaker 4: Purchases / GRN" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 4 • Supply Chain & Receiving</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការទិញទំនិញចូលស្តុក (Goods Received Notes - GRN)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-4 space-y-2">
+                    <span class="text-xs font-bold text-amber-400">Suppliers</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">គ្រប់គ្រងអ្នកផ្គត់ផ្គង់</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        កត់ត្រាឈ្មោះក្រុមហ៊ុន លេខទូរស័ព្ទ អ៊ីមែល និងអាសយដ្ឋាន ដើម្បីងាយស្រួលបញ្ជាទិញម្តងទៀត។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2">
+                    <span class="text-xs font-bold text-amber-400">Batch & Expiry</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">កាលបរិច្ឆេទផុតកំណត់</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        រាល់ការទិញចូលតម្រូវឱ្យកត់ត្រាលេខបាច់ (Batch #) និងថ្ងៃផុតកំណត់ ដើម្បីអនុវត្តគោលការណ៍ FIFO (First-In, First-Out)។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-4 space-y-2">
+                    <span class="text-xs font-bold text-amber-400">Cost Averaging</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">ថ្លៃដើមជាមធ្យម</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        គណនា Weighted Moving Average Cost ដោយស្វ័យប្រវត្តិនៅពេលទំនិញថ្មីចូលមកក្នុងតម្លៃប្រែប្រួល។
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card-amber rounded-2xl p-4 text-xs font-mono text-center text-stone-200">
+                New Avg Cost = [(Old Stock × Old Avg Cost) + (New Purchase Qty × New Unit Cost)] / [Old Stock + New Purchase Qty]
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 13: SPEAKER 4 - ADJUSTMENTS & WASTE -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="4" data-speaker-name="Speaker 4: Stock Adjustments" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 4 • Stock Auditing</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការកែសម្រួលស្តុក និងការកត់ត្រាការខូចខាត (Adjustments & Waste)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-rose-500 space-y-2">
+                    <span class="text-xs font-bold text-rose-400 uppercase">Mode 01</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">Waste / Spoilage (ខូចខាត)</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        សម្រាប់ទឹកដោះគោកំពប់, គ្រាប់កាហ្វេហួសកំណត់, ឬការឆុងខុស។ ប្រព័ន្ធនឹងកាត់ចេញពីស្តុកជាបន្ទាន់។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-amber-500 space-y-2">
+                    <span class="text-xs font-bold text-amber-400 uppercase">Mode 02</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">Calibration Loss (តេស្តកិន)</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ការកិនគ្រាប់កាហ្វេតេស្តម៉ាស៊ីន (Dial-in Espresso) រៀងរាល់ព្រឹក ដើម្បីធានាបាននូវរសជាតិកាហ្វេឆ្ងាញ់ឥតខ្ចោះ។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 border-t-2 border-blue-500 space-y-2">
+                    <span class="text-xs font-bold text-blue-400 uppercase">Mode 03</span>
+                    <h3 class="text-sm font-bold text-white font-khmer">Stocktake Recount (រាប់ស្តុក)</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ការរាប់ស្តុកជាក់ស្តែងប្រចាំខែ (Variance Adjustment) ដើម្បីតម្រឹមចំនួនក្នុងប្រព័ន្ធឱ្យត្រូវនឹងរបស់ពិត។
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card rounded-2xl p-4 flex items-center justify-between text-xs text-stone-300 font-khmer">
+                <span>⚡ មុខងារពិសេស: មានប៊ូតុង <strong>1-Click Reason Presets</strong> ជួយឱ្យបុគ្គលិកចុចជ្រើសរើសមូលហេតុបានរហ័ស មិនបាច់វាយអក្សរច្រើន។</span>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 14: SPEAKER 4 - REPORTS -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="4" data-speaker-name="Speaker 4: Reports" data-color="amber">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400">Speaker 4 • Business Intelligence</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">របាយការណ៍ស្តុក & ការវិភាគ (Inventory Analytics)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="glass-card rounded-2xl p-5 space-y-2">
+                    <div class="text-2xl">💰</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">Asset Valuation Report</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        គណនាតម្លៃទ្រព្យសរុបនៃគ្រាប់កាហ្វេ និងគ្រឿងផ្សំទាំងអស់ដែលមានក្នុងហាងជាទឹកប្រាក់ដុល្លារ ($) តាម Weighted Average Cost។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 space-y-2">
+                    <div class="text-2xl">⏰</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">Batch Expiry Tracking</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        តាមដានគ្រឿងផ្សំណាខ្លះដែលផុតកំណត់ ឬជិតផុតកំណត់ក្នុងរយៈពេល ៧ ថ្ងៃ ដើម្បីឱ្យបុគ្គលិកប្រញាប់ប្រើប្រាស់មុន។
+                    </p>
+                </div>
+
+                <div class="glass-card rounded-2xl p-5 space-y-2">
+                    <div class="text-2xl">🔔</div>
+                    <h3 class="text-sm font-bold text-white font-khmer">Low Stock Alerts</h3>
+                    <p class="text-xs text-stone-400 font-khmer leading-relaxed">
+                        ជូនដំណឹងពណ៌លឿងភ្លាមៗពេលគ្រឿងផ្សំណាធ្លាក់ក្រោម Minimum Safety Level ជួយកុំឱ្យដាច់ស្តុកពេលភ្ញៀវច្រើន។
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 15: SPEAKER 4 - AUTOMATED TESTING -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col justify-center space-y-6 w-full max-w-5xl" data-speaker="4" data-speaker-name="Speaker 4: Automated Testing" data-color="emerald">
+            <div class="border-b border-white/10 pb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Speaker 4 • Software Engineering Rigor</span>
+                <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1 font-khmer">ការធានាគុណភាពកូដ (Automated Pest Tests)</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6 items-center">
+                <div class="space-y-3 text-xs text-stone-300 font-khmer">
+                    <p>ប្រព័ន្ធនេះមិនគ្រាន់តែសរសេរដើម្បីដំណើរការលើ UI នោះទេ តែត្រូវបានធានាដោយ <strong>Automated Test Suite ចំនួន ៦២ Tests</strong> ដំណើរការដោយ Pest PHP៖</p>
+                    <ul class="space-y-2 font-mono text-[11px] text-stone-400">
+                        <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">PASS</span> Tests\Feature\InventoryServiceTest</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">PASS</span> Tests\Feature\StockManagementTest</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">PASS</span> Tests\Feature\TableManagementTest</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">PASS</span> Tests\Feature\PosTest</li>
+                        <li class="flex items-center gap-2"><span class="text-emerald-400 font-bold">PASS</span> Tests\Feature\AdminManagementTest</li>
+                    </ul>
+                </div>
+
+                <!-- Green Badge Card -->
+                <div class="glass-card rounded-3xl p-6 border border-emerald-500/30 text-center space-y-3 glow-emerald">
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-bold text-xs uppercase tracking-widest">
+                        Pest Test Suite
+                    </span>
+                    <div class="text-4xl font-extrabold font-mono text-emerald-400">
+                        62 / 62 PASSING
+                    </div>
+                    <p class="text-xs text-stone-400 font-mono">195 Assertions • 100% Green</p>
+                    <p class="text-[11px] text-stone-300 font-khmer">
+                        ធានាថាការលក់ និងកាត់ស្តុកគ្មាន Bug ឬកំហុសគណនាឡើយ។
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================== -->
+        <!-- SLIDE 16: CONCLUSION & LIVE DEMO -->
+        <!-- ========================================================== -->
+        <div class="slide flex-col items-center justify-center text-center space-y-6 w-full max-w-4xl" data-speaker="All" data-speaker-name="Team: Live Demo & Q&A" data-color="amber">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-bold uppercase tracking-widest">
+                <span>Summary & Live Demonstration</span>
+            </div>
+
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight font-khmer">
+                សេចក្តីសន្និដ្ឋាន & បើកវេទិកាសំណួរ-ចម្លើយ
+            </h2>
+
+            <p class="text-sm md:text-base text-stone-300 max-w-2xl font-khmer leading-relaxed">
+                Bong Heng Café POS គឺជាដំណោះស្រាយពេញលេញសម្រាប់អាជីវកម្មកាហ្វេសម័យថ្មី ដែលរួមបញ្ចូលរវាងការលក់រហ័ស (POS) ជាមួយការគ្រប់គ្រងស្តុកកម្រិតខ្ពស់ (Recipe BOM) ប្រកបដោយភាពជឿជាក់ និងច្បាស់លាស់បំផុត។
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
+                <a href="http://127.0.0.1:8000/" target="_blank" class="px-6 py-3 rounded-2xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold text-sm transition shadow-lg flex items-center gap-2">
+                    <span>🚀 បើកផ្ទាំង Live POS Demo</span>
+                </a>
+                <a href="http://127.0.0.1:8000/admin/stock" target="_blank" class="px-6 py-3 rounded-2xl bg-stone-900 border border-white/20 hover:border-amber-400 text-white font-bold text-sm transition flex items-center gap-2">
+                    <span>📦 ពិនិត្យ Stock & Inventory</span>
+                </a>
+            </div>
+
+            <p class="text-xs text-stone-400 font-khmer pt-2">
+                សូមអរគុណលោកគ្រូ អ្នកគ្រូ និងគណៈកម្មការទាំងអស់គ្នា! ពួកយើងត្រៀមខ្លួនរួចរាល់សម្រាប់ការសួរសំណួរ។
+            </p>
+        </div>
+
+    </main>
+
+    <!-- Bottom Navigation Bar & Keyboard Hints -->
+    <footer class="w-full z-20 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-stone-400">
+        <div class="flex items-center gap-2">
+            <button onclick="prevSlide()" class="px-3 py-1.5 rounded-xl bg-stone-900 hover:bg-stone-800 border border-white/10 text-white font-bold transition flex items-center gap-1">
+                <span>← មុន (Prev)</span>
+            </button>
+            <button onclick="nextSlide()" class="px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-stone-950 font-bold transition flex items-center gap-1">
+                <span>បន្ទាប់ (Next) →</span>
+            </button>
+            <span class="hidden md:inline text-stone-400 text-[11px] ml-2">ប្រើ <kbd class="px-1.5 py-0.5 rounded bg-stone-800 border border-white/10 text-stone-300 font-mono">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-stone-800 border border-white/10 text-stone-300 font-mono">→</kbd> ឬ <kbd class="px-1.5 py-0.5 rounded bg-stone-800 border border-white/10 text-stone-300 font-mono">Space</kbd> ដើម្បីប្តូរស្លាយ</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span id="slide-indicator" class="font-mono font-bold text-amber-400 text-sm">01 / 16</span>
+        </div>
+    </footer>
+
+    <!-- SPEAKER NOTES DRAWER (Toggle with 'N') -->
+    <div id="notes-drawer" class="fixed inset-x-0 bottom-0 max-h-[45vh] bg-stone-950/95 backdrop-blur-2xl border-t-2 border-amber-500/50 shadow-2xl z-50 p-6 transform translate-y-full transition-transform duration-300 ease-in-out overflow-y-auto">
+        <div class="max-w-4xl mx-auto space-y-3">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
+                    <h3 class="text-sm font-bold text-amber-300 font-khmer">Script សម្រាប់ឡើងនិយាយ (Speaker Speech & Demo Notes)</h3>
+                </div>
+                <button onclick="toggleNotes()" class="text-stone-400 hover:text-white text-lg font-bold">&times;</button>
+            </div>
+            <div id="notes-content" class="text-xs md:text-sm text-stone-200 font-khmer leading-relaxed space-y-2">
+                <!-- Injected dynamically via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT ENGINE -->
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progress-bar');
+        const slideIndicator = document.getElementById('slide-indicator');
+        const speakerName = document.getElementById('speaker-name');
+        const speakerDot = document.getElementById('speaker-dot');
+        const speakerBadge = document.getElementById('speaker-badge');
+        const notesDrawer = document.getElementById('notes-drawer');
+        const notesContent = document.getElementById('notes-content');
+        const timerDisplay = document.getElementById('timer-display');
+
+        let currentSlide = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+
+        // Speaker Scripts for all 16 slides
+        const speakerScripts = [
+            // Slide 1
+            `<p><strong>Speaker 1 (សេចក្តីផ្តើម):</strong> "ជម្រាបសួរលោកគ្រូ អ្នកគ្រូ និងមិត្តភក្តិទាំងអស់គ្នា។ ថ្ងៃនេះក្រុមខ្ញុំមានកិត្តិយសក្នុងការធ្វើបទបង្ហាញអំពីគម្រោង 'Bong Heng Café POS & Inventory Management System' ដែលជាប្រព័ន្ធគ្រប់គ្រងការលក់ និងស្តុកហាងកាហ្វេទំនើប។ ក្រុមរបស់យើងមានសមាជិក ៤ នាក់..."</p>`,
+            // Slide 2
+            `<p><strong>Speaker 1 (របៀបវារៈ):</strong> "បទបង្ហាញរបស់យើងត្រូវបានបែងចែកជា ៤ ផ្នែកច្បាស់លាស់៖ ខ្ញុំ [ឈ្មោះ Speaker 1] នឹងបកស្រាយពីបញ្ហា និងស្ថាបត្យកម្មប្រព័ន្ធ, មិត្ត [Speaker 2] នឹងបង្ហាញពីផ្ទាំងលក់ POS & Table, មិត្ត [Speaker 3] បកស្រាយពី Recipe BOM & Auto-deduction, និងមិត្ត [Speaker 4] បង្ហាញពី Purchases, Reports និង Pest Tests..."</p>`,
+            // Slide 3
+            `<p><strong>Speaker 1 (បញ្ហាប្រឈម):</strong> "បញ្ហាចម្បងក្នុងហាងកាហ្វេទូទៅសព្វថ្ងៃ គឺការបាត់បង់ស្តុកគ្រាប់កាហ្វេ និងទឹកដោះគោដោយមិនដឹងមូលហេតុ និងមិនដឹងថ្លៃដើមពិតក្នុងមួយកែវ។ ប្រព័ន្ធ Bong Heng Café ត្រូវបានបង្កើតឡើងដើម្បីដោះស្រាយបញ្ហាទាំងអស់នេះ..."</p>`,
+            // Slide 4
+            `<p><strong>Speaker 1 (Tech Stack):</strong> "យើងបានជ្រើសរើស Laravel 12 និង PHP 8.4 ដំណើរការលើ PostgreSQL ដែលផ្តល់នូវភាពរឹងមាំជាមួយ ACID Transactions និង Decimal Precision ៤ ខ្ទង់។ Frontend ប្រើ Tailwind CSS និង Alpine.js សម្រាប់ប្រតិបត្តិការលឿនគ្មាន Reload..."</p>`,
+            // Slide 5
+            `<p><strong>Speaker 1 (Roles & Permissions):</strong> "ប្រព័ន្ធបែងចែកសិទ្ធិច្បាស់លាស់តាម RBAC៖ Admin មានសិទ្ធិពេញលេញលើស្តុក និងរបាយការណ៍ ចំណែក Barista អាចប្រើប្រាស់បានតែផ្ទាំង POS ប៉ុណ្ណោះ។ បន្ទាប់ទៅ សូមអញ្ជើញមិត្ត [Speaker 2] បង្ហាញពីដំណើរការលក់ជាក់ស្តែង..."</p>`,
+            // Slide 6
+            `<p><strong>Speaker 2 (POS Workflow):</strong> "សូមអរគុណមិត្ត [Speaker 1]។ នេះជាផ្ទាំងបញ្ជាលក់ POS ដែលត្រូវបានរចនាសម្រាប់ Touch Screen ដំណើរការរហ័ស ងាយស្រួលជ្រើសរើសប្រភេទភេសជ្ជៈ និងមាន Product Variants ដូចជា Regular/Large, Hot/Iced..."</p>`,
+            // Slide 7
+            `<p><strong>Speaker 2 (Table Management):</strong> "សម្រាប់អតិថិជនញ៉ាំក្នុងហាង (Dine-In) យើងអាចជ្រើសរើសតុបានភ្លាមៗ។ តុទំនេរមានពណ៌បៃតង ពេល Checkout រួចនឹងប្តូរទៅជាពណ៌ក្រហម (Occupied)។ ចំណែកការខ្ចប់ទៅផ្ទះ (Takeaway) មិនបាច់ភ្ជាប់លេខតុឡើយ..."</p>`,
+            // Slide 8
+            `<p><strong>Speaker 2 (Payments & Receipt):</strong> "ប្រព័ន្ធគាំទ្រទាំងសាច់ប្រាក់ Cash ជាមួយការគណនាប្រាក់អាប់ និងស្ដង់ដារជាតិ Bakong KHQR ដ៏ពេញនិយម។ ពេល Checkout រួច វិក្កយបត្រកម្ដៅ 80mm នឹងត្រូវបានបង្កើតឡើងភ្លាមៗ។ បន្ទាប់ទៅ សូមអញ្ជើញមិត្ត [Speaker 3] បង្ហាញពីការកាត់ស្តុក..."</p>`,
+            // Slide 9
+            `<p><strong>Speaker 3 (Recipe BOM):</strong> "សូមអរគុណមិត្ត [Speaker 2]។ នៅក្នុងហាងកាហ្វេ យើងមិនលក់គ្រាប់កាហ្វេទេ តែលក់ Latte។ ដូច្នេះ រូបមន្ត Recipe BOM គឺជាស្នូលសំខាន់៖ ឧទាហរណ៍ Iced Latte ១ កែវ ប្រើគ្រាប់កាហ្វេ 18g, ទឹកដោះគោ 150ml, ស៊ីរ៉ូ 10ml, និងកែវ ១..."</p>`,
+            // Slide 10
+            `<p><strong>Speaker 3 (Inventory Engine):</strong> "បេះដូងនៃប្រព័ន្ធគឺ InventoryService៖ រាល់ការលក់ត្រូវបានរុំព័ទ្ធក្នុង DB::transaction()។ ប្រសិនបើមានបញ្ហា វានឹង Rollback មិនឱ្យបាត់ស្តុកឡើយ។ យើងមាន Duplicate Guard ការពារការកាត់ស្តុកជាន់គ្នា និងមាន Safe Unit Conversion (kg ទៅ g, L ទៅ ml)..."</p>`,
+            // Slide 11
+            `<p><strong>Speaker 3 (Costing & Margins):</strong> "ប្រព័ន្ធគណនាថ្លៃដើមគ្រឿងផ្សំ (COGS) និងបង្ហាញ Gross Profit Margin % លើផ្ទាំង Recipe ភ្លាមៗ ជួយឱ្យម្ចាស់ហាងដឹងថាក្នុងមួយកែវចំណេញបានប៉ុន្មានភាគរយ (ឧ. ៧៦.៥%)។ សូមអញ្ជើញមិត្ត [Speaker 4] បន្ត..."</p>`,
+            // Slide 12
+            `<p><strong>Speaker 4 (Purchases / GRN):</strong> "សូមអរគុណមិត្ត [Speaker 3]។ នៅពេលទិញគ្រឿងផ្សំចូលស្តុក យើងបង្កើតប័ណ្ណទិញទំនិញ (GRN) ដោយកត់ត្រាអ្នកផ្គត់ផ្គង់, Batch Number និងថ្ងៃផុតកំណត់ (FIFO) ព្រមទាំងគណនាថ្លៃដើមជាមធ្យម (Weighted Moving Average Cost) ដោយស្វ័យប្រវត្តិ..."</p>`,
+            // Slide 13
+            `<p><strong>Speaker 4 (Stock Adjustments & Waste):</strong> "នៅក្នុងប្រតិបត្តិការជាក់ស្តែង តែងតែមានការខូចខាត។ ប្រព័ន្ធយើងអនុញ្ញាតឱ្យកត់ត្រា Waste (កំពប់/ខូច), Calibration Loss (កិនតេស្តកាហ្វេ), និង Recount (រាប់ស្តុកជាក់ស្តែង) ដោយមាន 1-Click Reason Presets ងាយស្រួលចុច..."</p>`,
+            // Slide 14
+            `<p><strong>Speaker 4 (Reports & Valuation):</strong> "យើងមានរបាយការណ៍ Asset Valuation គណនាតម្លៃទ្រព្យស្តុកសរុបជាដុល្លារ ($), Batch Expiry តាមដានទំនិញជិតផុតកំណត់, និង Low Stock Alerts ជូនដំណឹងពេលស្តុកជិតអស់..."</p>`,
+            // Slide 15
+            `<p><strong>Speaker 4 (Automated Testing):</strong> "គុណភាពនៃគម្រោងត្រូវបានធានាដោយ Automated Tests ចំនួន ៦២ Tests តាមរយៈ Pest PHP ដែលឆ្លងកាត់ជោគជ័យ ១០០% (Passing Green) រួមទាំងការ Format កូដស្អាតជាមួយ Laravel Pint..."</p>`,
+            // Slide 16
+            `<p><strong>Speaker 4 & Team (សេចក្តីសន្និដ្ឋាន & Live Demo):</strong> "សរុបមក Bong Heng Café POS គឺជាប្រព័ន្ធពេញលេញ និងត្រឹមត្រូវតាមស្ដង់ដារអាជីវកម្មពិត។ ឥឡូវនេះ ពួកយើងសូមអញ្ជើញលោកគ្រូ អ្នកគ្រូ ទស្សនាការ Live Demo ជាក់ស្តែងនៅលើប្រព័ន្ធ..."</p>`
+        ];
+
+        function updateSlide() {
+            slides.forEach((s, idx) => {
+                s.classList.toggle('active', idx === currentSlide);
+            });
+
+            // Update progress bar & indicator
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            slideIndicator.textContent = `${String(currentSlide + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+
+            // Update speaker badge
+            const activeSlide = slides[currentSlide];
+            const speaker = activeSlide.getAttribute('data-speaker-name') || 'Speaker';
+            const color = activeSlide.getAttribute('data-color') || 'amber';
+
+            speakerName.textContent = speaker;
+            if (color === 'emerald') {
+                speakerBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 border bg-emerald-500/15 border-emerald-500/30 text-emerald-300';
+                speakerDot.className = 'h-2 w-2 rounded-full bg-emerald-400 animate-pulse';
+            } else {
+                speakerBadge.className = 'px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-2 border bg-amber-500/15 border-amber-500/30 text-amber-300';
+                speakerDot.className = 'h-2 w-2 rounded-full bg-amber-400 animate-pulse';
+            }
+
+            // Update speaker notes content
+            notesContent.innerHTML = speakerScripts[currentSlide] || '<p>គ្មានកំណត់សម្គាល់សម្រាប់ស្លាយនេះទេ។</p>';
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
+        }
+
+        function toggleNotes() {
+            notesDrawer.classList.toggle('translate-y-full');
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        // Start presentation timer
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                    const secs = String(timerSeconds % 60).padStart(2, '0');
+                    timerDisplay.textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
+        }
+
+        // Keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            startTimer();
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                prevSlide();
+            } else if (e.key.toLowerCase() === 'f') {
+                toggleFullscreen();
+            } else if (e.key.toLowerCase() === 'n') {
+                toggleNotes();
+            } else if (e.key === 'Home') {
+                currentSlide = 0;
+                updateSlide();
+            } else if (e.key === 'End') {
+                currentSlide = slides.length - 1;
+                updateSlide();
+            }
+        });
+
+        // Initialize
+        updateSlide();
+        startTimer();
+    </script>
+</body>
+</html>

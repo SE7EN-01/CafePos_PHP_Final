@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "C:\\php-8.5.8\\php.exe",
+            "args": [
+                "C:\\Users\\lengk\\OneDrive\\Desktop\\coffee-shop-management-system\\artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
