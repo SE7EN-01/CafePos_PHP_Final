@@ -2,10 +2,13 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('posRegister', () => ({
-                activeCategory: 'All items',
+                lang: localStorage.getItem('pos_lang') || '{{ $default_language ?? 'km' }}',
+                exchangeRate: {{ $exchange_rate ?? 4100 }},
+                activeCategory: 'all',
                 search: '',
                 cart: [],
-                products: @json($products),
+                categories: @json($categories, JSON_UNESCAPED_UNICODE),
+                products: @json($products, JSON_UNESCAPED_UNICODE),
                 showMobileCart: false,
                 orderType: 'dine_in',
                 showQuickPayModal: false,
@@ -13,14 +16,88 @@
                 selectedPaymentMethod: 'cash',
                 quickBills: [5, 10, 20, 50, 100],
 
+                translations: {
+                    en: {
+                        pos_title: 'Point of Sale (POS)',
+                        pos_subtitle: 'Espresso & Specialty Cafe Order Register',
+                        online: 'Online',
+                        dine_in: 'Dine In',
+                        takeaway: 'Takeaway',
+                        search_placeholder: 'Search drinks, pastries, espresso...',
+                        all_items: 'All items',
+                        out_of_stock: 'Out of stock',
+                        left: 'left',
+                        no_items_found: 'No menu items found',
+                        no_items_desc: 'No products match your current search query or active category filter.',
+                        reset_filters: 'Reset Filters',
+                        current_order: 'Current Order',
+                        items: 'items',
+                        cart_empty: 'Your cart is empty',
+                        cart_empty_desc: 'Select drinks and pastries to build a coffee order.',
+                        subtotal: 'Subtotal',
+                        total_amount: 'Total Amount',
+                        checkout: 'Checkout',
+                        clear_order: 'Clear Order',
+                        view_cart: 'View Cart',
+                        default_desc: 'Specialty roasted cafe selection.',
+                    },
+                    km: {
+                        pos_title: 'ប្រព័ន្ធលក់ទំនិញ (POS)',
+                        pos_subtitle: 'បញ្ជរបញ្ជាទិញកាហ្វេ និងភេសជ្ជៈពិសេស',
+                        online: 'ដំណើរការ',
+                        dine_in: 'ញ៉ាំនៅហាង',
+                        takeaway: 'ខ្ចប់ទៅផ្ទះ',
+                        search_placeholder: 'ស្វែងរកភេសជ្ជៈ នំ កាហ្វេ...',
+                        all_items: 'មុខទំនិញទាំងអស់',
+                        out_of_stock: 'អស់ពីស្តុក',
+                        left: 'នៅសល់',
+                        no_items_found: 'រកមិនឃើញទំនិញទេ',
+                        no_items_desc: 'មិនមានទំនិញត្រូវនឹងពាក្យស្វែងរក ឬប្រភេទដែលបានជ្រើសរើសឡើយ។',
+                        reset_filters: 'កំណត់ឡើងវិញ',
+                        current_order: 'ការបញ្ជាទិញបច្ចុប្បន្ន',
+                        items: 'មុខ',
+                        cart_empty: 'កន្ត្រករបស់អ្នកទទេ',
+                        cart_empty_desc: 'ជ្រើសរើសភេសជ្ជៈ និងនំ ដើម្បីបង្កើតការបញ្ជាទិញ។',
+                        subtotal: 'សរុបរង',
+                        total_amount: 'ទឹកប្រាក់សរុប',
+                        checkout: 'ទូទាត់ប្រាក់ (Checkout)',
+                        clear_order: 'សម្អាតកន្ត្រក',
+                        view_cart: 'មើលកន្ត្រក',
+                        default_desc: 'ការជ្រើសរើសកាហ្វេពិសេសប្រចាំហាង។',
+                    }
+                },
+
+                t(key) {
+                    return this.translations[this.lang]?.[key] || this.translations['en']?.[key] || key;
+                },
+
+                setLanguage(newLang) {
+                    this.lang = newLang;
+                    localStorage.setItem('pos_lang', newLang);
+                },
+
                 get filteredProducts() {
                     return this.products.filter((product) => {
-                        const matchesCategory = this.activeCategory === 'All items' || product.category === this.activeCategory;
+                        const matchesCategory = this.activeCategory === 'all' || 
+                            product.category_id === String(this.activeCategory) ||
+                            product.category_en === this.activeCategory ||
+                            product.category_km === this.activeCategory;
+
                         const query = this.search.trim().toLowerCase();
-                        const matchesSearch = !query || 
-                            product.name.toLowerCase().includes(query) || 
-                            product.product_name.toLowerCase().includes(query) ||
-                            (product.description && product.description.toLowerCase().includes(query));
+                        if (!query) return matchesCategory;
+
+                        const matchesSearch = 
+                            (product.name && product.name.toLowerCase().includes(query)) || 
+                            (product.product_name && product.product_name.toLowerCase().includes(query)) ||
+                            (product.product_name_en && product.product_name_en.toLowerCase().includes(query)) ||
+                            (product.product_name_km && product.product_name_km.toLowerCase().includes(query)) ||
+                            (product.variant_name_en && product.variant_name_en.toLowerCase().includes(query)) ||
+                            (product.variant_name_km && product.variant_name_km.toLowerCase().includes(query)) ||
+                            (product.category_en && product.category_en.toLowerCase().includes(query)) ||
+                            (product.category_km && product.category_km.toLowerCase().includes(query)) ||
+                            (product.description_en && product.description_en.toLowerCase().includes(query)) ||
+                            (product.description_km && product.description_km.toLowerCase().includes(query));
+
                         return matchesCategory && matchesSearch;
                     });
                 },
@@ -73,6 +150,10 @@
                     return '$' + Number(value).toFixed(2);
                 },
 
+                formatKhr(value) {
+                    return Number(Math.round((value * this.exchangeRate) / 100) * 100).toLocaleString('en-US');
+                },
+
                 setExactCash() {
                     this.cashGiven = Math.ceil(this.total);
                 },
@@ -107,31 +188,44 @@
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="text-2xl font-bold font-display tracking-tight text-stone-900">Point of Sale (POS)</h1>
+                            <h1 class="text-2xl font-bold font-display tracking-tight text-stone-900" x-text="t('pos_title')">Point of Sale (POS)</h1>
                             <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 border border-emerald-200">
                                 <span class="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                                Online
+                                <span x-text="t('online')">Online</span>
                             </span>
                         </div>
-                        <p class="text-xs text-stone-500 mt-0.5">Espresso & Specialty Cafe Order Register</p>
+                        <p class="text-xs text-stone-500 mt-0.5" x-text="t('pos_subtitle')">Espresso &amp; Specialty Cafe Order Register</p>
                     </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <!-- Order Type Selector -->
-                    <div class="inline-flex rounded-2xl bg-stone-100 p-1 border border-stone-200">
-                        <button type="button" @click="orderType = 'dine_in'" :class="orderType === 'dine_in' ? 'bg-white text-stone-900 font-bold shadow-sm' : 'text-stone-600 hover:text-stone-900 font-medium'" class="flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs transition">
-                            <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0" /></svg>
-                            Dine In
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Language Selector (English & Khmer) -->
+                    <div class="inline-flex rounded-2xl bg-stone-100 p-1 border border-stone-200 shadow-inner">
+                        <button 
+                            type="button" 
+                            @click="setLanguage('en')" 
+                            :class="lang === 'en' ? 'bg-white text-stone-950 font-bold shadow-sm' : 'text-stone-600 hover:text-stone-900 font-medium'" 
+                            class="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs transition"
+                            title="English language"
+                        >
+                            <span class="text-sm leading-none">🇺🇸</span>
+                            <span>English</span>
                         </button>
-                        <button type="button" @click="orderType = 'takeaway'" :class="orderType === 'takeaway' ? 'bg-white text-stone-900 font-bold shadow-sm' : 'text-stone-600 hover:text-stone-900 font-medium'" class="flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-xs transition">
-                            <svg class="h-4 w-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" /></svg>
-                            Takeaway
+                        <button 
+                            type="button" 
+                            @click="setLanguage('km')" 
+                            :class="lang === 'km' ? 'bg-white text-stone-950 font-bold shadow-sm' : 'text-stone-600 hover:text-stone-900 font-medium'" 
+                            class="flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs transition font-khmer"
+                            title="ភាសាខ្មែរ"
+                        >
+                            <span class="text-sm leading-none">🇰🇭</span>
+                            <span>ខ្មែរ</span>
                         </button>
                     </div>
 
                     <!-- Date Pill -->
                     <div class="hidden sm:flex items-center gap-2 rounded-2xl bg-stone-100/80 px-3.5 py-2 text-xs font-semibold text-stone-600 border border-stone-200">
+
                         <svg class="h-4 w-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" /></svg>
                         <span>{{ now()->format('D, M j, Y') }}</span>
                     </div>
@@ -153,6 +247,7 @@
                                 id="pos-search-input"
                                 x-model="search" 
                                 type="search" 
+                                :placeholder="t('search_placeholder')"
                                 placeholder="Search drinks, pastries, espresso..." 
                                 class="w-full rounded-2xl border-stone-200 bg-stone-50/70 py-3 pl-11 pr-4 text-sm text-stone-900 placeholder-stone-400 focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20 transition"
                             >
@@ -160,19 +255,26 @@
 
                         <!-- Category Pills -->
                         <div class="flex gap-2 overflow-x-auto pb-1 custom-scrollbar">
-                            @foreach ($categories as $category)
+                            <!-- All Items Pill -->
+                            <button 
+                                type="button" 
+                                @click="activeCategory = 'all'" 
+                                :class="activeCategory === 'all' ? 'bg-[#1C1917] text-white shadow-md shadow-stone-900/20 font-semibold' : 'bg-stone-100 text-stone-700 hover:bg-stone-200 hover:text-stone-900 font-medium'" 
+                                class="whitespace-nowrap rounded-xl px-4 py-2.5 text-xs transition flex items-center gap-1.5"
+                            >
+                                <svg class="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6Z" /></svg>
+                                <span x-text="t('all_items')">All items</span>
+                            </button>
+
+                            @foreach ($categories as $cat)
                                 <button 
                                     type="button" 
-                                    @click="activeCategory = '{{ $category }}'" 
-                                    :class="activeCategory === '{{ $category }}' ? 'bg-[#1C1917] text-white shadow-md shadow-stone-900/20 font-semibold' : 'bg-stone-100 text-stone-700 hover:bg-stone-200 hover:text-stone-900 font-medium'" 
+                                    @click="activeCategory = '{{ $cat['id'] }}'" 
+                                    :class="activeCategory === '{{ $cat['id'] }}' ? 'bg-[#1C1917] text-white shadow-md shadow-stone-900/20 font-semibold' : 'bg-stone-100 text-stone-700 hover:bg-stone-200 hover:text-stone-900 font-medium'" 
                                     class="whitespace-nowrap rounded-xl px-4 py-2.5 text-xs transition flex items-center gap-1.5"
                                 >
-                                    @if ($category === 'All items')
-                                        <svg class="h-3.5 w-3.5 text-amber-400" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6Z" /></svg>
-                                    @else
-                                        <span class="h-1.5 w-1.5 rounded-full" :class="activeCategory === '{{ $category }}' ? 'bg-amber-400' : 'bg-stone-400'"></span>
-                                    @endif
-                                    <span>{{ $category }}</span>
+                                    <span class="h-1.5 w-1.5 rounded-full" :class="activeCategory === '{{ $cat['id'] }}' ? 'bg-amber-400' : 'bg-stone-400'"></span>
+                                    <span x-text="lang === 'km' ? '{{ $cat['name_km'] }}' : '{{ $cat['name_en'] }}'">{{ $cat['name_en'] }}</span>
                                 </button>
                             @endforeach
                         </div>
@@ -192,12 +294,12 @@
                                     <div class="pointer-events-none absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-amber-500/10 blur-xl group-hover:bg-amber-500/25 transition"></div>
                                     
                                     <div class="flex items-center justify-between z-10">
-                                        <span class="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 backdrop-blur-md border border-white/10" x-text="product.category"></span>
+                                        <span class="inline-flex items-center rounded-full bg-white/10 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 backdrop-blur-md border border-white/10" x-text="lang === 'km' ? product.category_km : product.category_en"></span>
                                         <template x-if="product.track_stock">
                                             <span 
                                                 class="rounded-full px-2 py-0.5 text-[10px] font-bold"
                                                 :class="product.stock_quantity <= 0 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/30' : (product.stock_quantity <= 5 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30')"
-                                                x-text="product.stock_quantity <= 0 ? 'Out of stock' : product.stock_quantity + ' left'"
+                                                x-text="product.stock_quantity <= 0 ? t('out_of_stock') : product.stock_quantity + ' ' + t('left')"
                                             ></span>
                                         </template>
                                     </div>
@@ -215,12 +317,19 @@
                                 <!-- Card Content -->
                                 <div class="flex flex-1 flex-col justify-between p-4 sm:p-5">
                                     <div>
-                                        <h3 class="font-bold text-stone-900 leading-snug group-hover:text-amber-700 transition" x-text="product.product_name"></h3>
-                                        <p class="text-xs text-stone-500 font-medium mt-0.5 flex items-center gap-1.5">
+                                        <!-- Primary Product Title in Selected Language -->
+                                        <h3 class="font-bold text-stone-900 leading-snug group-hover:text-amber-700 transition" x-text="lang === 'km' ? product.product_name_km : product.product_name_en"></h3>
+                                        
+                                        <!-- Secondary Subtitle (Alternative Language) -->
+                                        <p class="text-[11px] text-stone-400 mt-0.5" x-text="lang === 'km' ? product.product_name_en : product.product_name_km"></p>
+                                        
+                                        <!-- Variant Pill & Details -->
+                                        <p class="text-xs text-stone-500 font-medium mt-1.5 flex items-center gap-1.5">
                                             <span class="inline-block h-1.5 w-1.5 rounded-full bg-amber-500"></span>
-                                            <span x-text="product.variant_name"></span>
+                                            <span x-text="lang === 'km' ? product.variant_name_km : product.variant_name_en"></span>
                                         </p>
-                                        <p class="text-xs text-stone-400 mt-2 line-clamp-2" x-text="product.description || 'Specialty roasted cafe selection.'"></p>
+                                        
+                                        <p class="text-xs text-stone-400 mt-2 line-clamp-2" x-text="(lang === 'km' ? product.description_km : product.description_en) || t('default_desc')"></p>
                                     </div>
 
                                     <div class="mt-4 flex items-center justify-between pt-3 border-t border-stone-100">
@@ -241,10 +350,10 @@
                         <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-50 text-amber-700 mb-3">
                             <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
                         </div>
-                        <h4 class="text-base font-bold text-stone-900">No menu items found</h4>
-                        <p class="text-xs text-stone-500 mt-1 max-w-sm mx-auto">No products match your current search query or active category filter.</p>
-                        <button type="button" @click="search = ''; activeCategory = 'All items'" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-stone-900 px-4 py-2 text-xs font-semibold text-white hover:bg-stone-800 transition">
-                            Reset Filters
+                        <h4 class="text-base font-bold text-stone-900" x-text="t('no_items_found')">No menu items found</h4>
+                        <p class="text-xs text-stone-500 mt-1 max-w-sm mx-auto" x-text="t('no_items_desc')">No products match your current search query or active category filter.</p>
+                        <button type="button" @click="search = ''; activeCategory = 'all'" class="mt-4 inline-flex items-center gap-2 rounded-xl bg-stone-900 px-4 py-2 text-xs font-semibold text-white hover:bg-stone-800 transition">
+                            <span x-text="t('reset_filters')">Reset Filters</span>
                         </button>
                     </div>
                 </section>
@@ -254,20 +363,20 @@
                     class="sticky top-6 rounded-3xl bg-[#1C1917] text-white p-6 shadow-2xl border border-stone-800 xl:block select-none"
                     :class="showMobileCart ? 'fixed inset-0 z-50 rounded-none p-6 overflow-y-auto flex flex-col justify-between' : 'hidden xl:block'"
                 >
-                    <!-- Mobile Close Button -->
+                    <!-- Mobile Close Button & Header -->
                     <div class="flex items-center justify-between border-b border-stone-800 pb-5">
                         <div class="flex items-center gap-3">
                             <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-stone-950 font-bold shadow-md shadow-amber-500/20">
                                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
                             </div>
                             <div>
-                                <h2 class="text-lg font-bold font-display tracking-tight text-white leading-tight">Current Order</h2>
-                                <p class="text-[11px] text-amber-400/80 font-medium capitalize" x-text="orderType.replace('_', ' ')"></p>
+                                <h2 class="text-lg font-bold font-display tracking-tight text-white leading-tight" x-text="t('current_order')">Current Order</h2>
+                                <p class="text-[11px] text-amber-400/80 font-medium" x-text="lang === 'km' ? 'បញ្ជីទំនិញជ្រើសរើស' : 'Selected Items'">Selected Items</p>
                             </div>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <span class="inline-flex items-center justify-center rounded-full bg-amber-500/20 px-3 py-1 text-xs font-bold text-amber-300 border border-amber-500/30" x-text="itemCount + ' items'"></span>
+                            <span class="inline-flex items-center justify-center rounded-full bg-amber-500/20 px-3 py-1 text-xs font-bold text-amber-300 border border-amber-500/30" x-text="itemCount + ' ' + t('items')"></span>
                             <button type="button" @click="showMobileCart = false" class="xl:hidden rounded-xl p-2 text-stone-400 hover:bg-white/10 hover:text-white">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                             </button>
@@ -279,8 +388,9 @@
                         <template x-for="item in cart" :key="item.id">
                             <div class="flex items-center justify-between gap-3 rounded-2xl bg-[#25211E] p-3.5 border border-stone-800 hover:border-stone-700 transition">
                                 <div class="min-w-0 flex-1">
-                                    <p class="truncate text-sm font-semibold text-white leading-tight" x-text="item.product_name"></p>
-                                    <p class="text-xs text-stone-400 font-medium" x-text="item.variant_name"></p>
+                                    <p class="truncate text-sm font-semibold text-white leading-tight" x-text="lang === 'km' ? item.product_name_km : item.product_name_en"></p>
+                                    <p class="text-[10px] text-stone-400 truncate" x-text="lang === 'km' ? item.product_name_en : item.product_name_km"></p>
+                                    <p class="text-xs text-amber-300/90 font-medium mt-0.5" x-text="lang === 'km' ? item.variant_name_km : item.variant_name_en"></p>
                                     <p class="text-xs font-bold text-amber-400 mt-1" x-text="formatCurrency(item.price)"></p>
                                 </div>
 
@@ -303,20 +413,23 @@
                             <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 text-amber-400/80 border border-white/5 mb-3">
                                 <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                             </div>
-                            <p class="text-sm font-bold text-stone-200">Your cart is empty</p>
-                            <p class="mt-1 max-w-[220px] text-xs text-stone-400">Select drinks and pastries to build a coffee order.</p>
+                            <p class="text-sm font-bold text-stone-200" x-text="t('cart_empty')">Your cart is empty</p>
+                            <p class="mt-1 max-w-[220px] text-xs text-stone-400" x-text="t('cart_empty_desc')">Select drinks and pastries to build a coffee order.</p>
                         </div>
                     </div>
 
                     <!-- Bill Totals Breakdown -->
                     <div class="space-y-2.5 border-t border-stone-800 pt-4 text-xs">
                         <div class="flex justify-between text-stone-400">
-                            <span>Subtotal</span>
+                            <span x-text="t('subtotal')">Subtotal</span>
                             <span class="font-semibold text-stone-200" x-text="formatCurrency(subtotal)"></span>
                         </div>
                         <div class="flex items-baseline justify-between pt-2 border-t border-stone-800/80">
-                            <span class="text-sm font-bold text-white">Total Amount</span>
-                            <span class="text-2xl font-extrabold text-amber-400 font-display tracking-tight" x-text="formatCurrency(total)"></span>
+                            <span class="text-sm font-bold text-white" x-text="t('total_amount')">Total Amount</span>
+                            <div class="text-right">
+                                <span class="text-2xl font-extrabold text-amber-400 font-display tracking-tight" x-text="formatCurrency(total)"></span>
+                                <p class="text-[11px] text-amber-300/80 font-mono mt-0.5" x-text="'(' + formatKhr(total) + ' ៛)'"></p>
+                            </div>
                         </div>
                     </div>
 
@@ -331,7 +444,7 @@
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
                             </svg>
-                            <span>Checkout (<span x-text="formatCurrency(total)"></span>)</span>
+                            <span><span x-text="t('checkout')">Checkout</span> (<span x-text="formatCurrency(total)"></span> &bull; <span x-text="formatKhr(total) + ' ៛'"></span>)</span>
                         </button>
 
                         <button 
@@ -340,7 +453,7 @@
                             :disabled="cart.length === 0" 
                             class="w-full rounded-2xl border border-stone-800 bg-white/5 px-4 py-3 text-xs font-semibold text-stone-400 transition hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
                         >
-                            Clear Order
+                            <span x-text="t('clear_order')">Clear Order</span>
                         </button>
                     </div>
                 </aside>
@@ -355,7 +468,7 @@
                 class="fixed bottom-6 right-6 z-40 xl:hidden inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-amber-400 to-amber-600 px-6 py-3.5 text-sm font-bold text-stone-950 shadow-2xl shadow-amber-500/40"
             >
                 <div class="flex h-7 w-7 items-center justify-center rounded-full bg-stone-950 text-amber-400 text-xs font-bold" x-text="itemCount"></div>
-                <span>View Cart &bull; <span x-text="formatCurrency(total)"></span></span>
+                <span><span x-text="t('view_cart')">View Cart</span> &bull; <span x-text="formatCurrency(total)"></span></span>
             </button>
         </div>
     </div>

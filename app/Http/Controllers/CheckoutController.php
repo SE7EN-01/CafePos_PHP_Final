@@ -6,6 +6,7 @@ use App\Models\CafeTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ProductVariant;
+use App\Models\Setting;
 use App\Services\InventoryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -33,8 +34,30 @@ class CheckoutController extends Controller
             $lineTotal = $variant->price * $item['quantity'];
             $subtotal += $lineTotal;
 
+            $prodTrans = $variant->product->name_translations ?? [];
+            $enProdName = $prodTrans['en'] ?? $variant->product->name;
+            $kmProdName = $prodTrans['km'] ?? $enProdName;
+
+            $varTrans = $variant->name_translations ?? [];
+            $rawVarName = is_string($variant->name) ? $variant->name : ($varTrans['en'] ?? 'Regular');
+
+            $enVarName = match ($rawVarName) {
+                'ធម្មតា' => 'Regular',
+                'ធំ' => 'Large',
+                default => $varTrans['en'] ?? $rawVarName,
+            };
+            $kmVarName = match ($rawVarName) {
+                'Regular' => 'ធម្មតា',
+                'Large' => 'ធំ',
+                default => $varTrans['km'] ?? ($varTrans['en'] ?? $rawVarName),
+            };
+
             $items[] = [
                 'variant' => $variant,
+                'product_name_en' => $enProdName,
+                'product_name_km' => $kmProdName,
+                'variant_name_en' => $enVarName,
+                'variant_name_km' => $kmVarName,
                 'quantity' => $item['quantity'],
                 'unit_price' => $variant->price,
                 'subtotal' => $lineTotal,
@@ -44,12 +67,21 @@ class CheckoutController extends Controller
         $total = $subtotal;
         $tables = CafeTable::where('is_active', true)->orderBy('name')->get();
 
+        $exchangeRate = (int) Setting::get('exchange_rate_khr', 4100);
+        $cashEnabled = (bool) Setting::get('payment_cash_enabled', true);
+        $khqrEnabled = (bool) Setting::get('payment_khqr_enabled', true);
+        $cashDefaultCurrency = (string) Setting::get('default_currency', 'khr');
+
         return view('pos.checkout', [
             'items' => $items,
             'subtotal' => $subtotal,
             'total' => $total,
             'order_type' => $orderType,
             'tables' => $tables,
+            'exchangeRate' => $exchangeRate,
+            'cashEnabled' => $cashEnabled,
+            'khqrEnabled' => $khqrEnabled,
+            'cashDefaultCurrency' => $cashDefaultCurrency,
         ]);
     }
 

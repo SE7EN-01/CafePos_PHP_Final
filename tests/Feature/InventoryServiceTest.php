@@ -217,3 +217,44 @@ it('allows admin to manage recipes, suppliers, purchases and view reports', func
     $response->assertOk();
     $response->assertSee('Inventory Reports');
 });
+
+it('correctly detects expired and expiring soon ingredients', function () {
+    $expired = Ingredient::create([
+        'name' => ['en' => 'Expired Milk'],
+        'unit' => 'ml',
+        'current_stock' => 500,
+        'reorder_level' => 100,
+        'purchase_cost' => 1.50,
+        'average_cost' => 1.50,
+        'expiry_date' => now()->subDay(),
+    ]);
+
+    $expiringSoon = Ingredient::create([
+        'name' => ['en' => 'Expiring Milk'],
+        'unit' => 'ml',
+        'current_stock' => 500,
+        'reorder_level' => 100,
+        'purchase_cost' => 1.50,
+        'average_cost' => 1.50,
+        'expiry_date' => now()->addDays(3),
+    ]);
+
+    $fresh = Ingredient::create([
+        'name' => ['en' => 'Fresh Milk'],
+        'unit' => 'ml',
+        'current_stock' => 500,
+        'reorder_level' => 100,
+        'purchase_cost' => 1.50,
+        'average_cost' => 1.50,
+        'expiry_date' => now()->addMonth(),
+    ]);
+
+    expect($expired->isExpired())->toBeTrue();
+    expect($expired->isExpiringSoon())->toBeFalse();
+
+    expect($expiringSoon->isExpired())->toBeFalse();
+    expect($expiringSoon->isExpiringSoon())->toBeTrue();
+
+    expect($fresh->isExpired())->toBeFalse();
+    expect($fresh->isExpiringSoon())->toBeFalse();
+});

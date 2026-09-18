@@ -43,3 +43,17 @@ it('shows categories from database in POS', function () {
     $response->assertOk();
     $response->assertSee('All items');
 });
+
+it('supports english and khmer bilingual data in POS register', function () {
+    $this->seed(CoffeeShopSeeder::class);
+
+    $user = User::factory()->create(['email_verified_at' => now()]);
+
+    $response = $this->actingAs($user)->get(route('pos.index'));
+
+    $response->assertOk();
+    $response->assertSee('English');
+    $response->assertSee('ខ្មែរ');
+    $response->assertSee('កាពូឈីណូ');
+    $response->assertSee('Cappuccino');
+});

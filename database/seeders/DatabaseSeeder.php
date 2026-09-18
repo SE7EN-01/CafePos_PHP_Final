@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             RoleAndPermissionSeeder::class,
             CoffeeShopSeeder::class,
+            RealisticCafeSeeder::class,
         ]);
 
         $adminUser->assignRole('admin');

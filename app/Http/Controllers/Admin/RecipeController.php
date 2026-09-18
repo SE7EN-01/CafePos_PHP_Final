@@ -22,7 +22,7 @@ class RecipeController extends Controller
         $variants = ProductVariant::with(['product.category', 'recipes.ingredient'])
             ->where('is_active', true)
             ->get()
-            ->map(function ($variant) {
+            ->map(function (ProductVariant $variant) {
                 $costData = $this->inventoryService->calculateRecipeCost($variant);
 
                 return (object) [

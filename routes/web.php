@@ -7,19 +7,17 @@ use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\RecipeController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\KhqrController;
 use App\Http\Controllers\PosController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\PreventBaristaAccess;
-use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\ProductVariant;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -41,45 +39,9 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    if (auth()->user()->hasRole('barista')) {
-        return redirect()->route('pos.index');
-    }
-
-    $today = now()->startOfDay();
-
-    $todayRevenue = Order::where('created_at', '>=', $today)->sum('total_amount');
-    $ordersToday = Order::where('created_at', '>=', $today)->count();
-    $itemsSold = OrderItem::whereHas('order', fn ($q) => $q->where('created_at', '>=', $today))->sum('quantity');
-    $teamMembers = User::count();
-
-    $recentOrders = Order::with('user')
-        ->latest()
-        ->limit(5)
-        ->get()
-        ->map(fn ($order) => (object) [
-            'number' => $order->order_number,
-            'type' => str_replace('_', ' ', $order->order_type),
-            'total' => number_format($order->total_amount, 2),
-        ]);
-
-    $popularProducts = ProductVariant::select('product_variants.*')
-        ->selectRaw('(SELECT SUM(quantity) FROM order_items WHERE product_variant_id = product_variants.id) as total_sold')
-        ->with('product')
-        ->orderByDesc('total_sold')
-        ->limit(4)
-        ->get()
-        ->filter(fn ($v) => $v->total_sold > 0);
-
-    return view('dashboard', compact(
-        'todayRevenue',
-        'ordersToday',
-        'itemsSold',
-        'teamMembers',
-        'recentOrders',
-        'popularProducts',
-    ));
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/pos', [PosController::class, 'index'])
     ->middleware('auth')
@@ -155,6 +117,9 @@ Route::middleware(['auth', PreventBaristaAccess::class, 'verified'])->prefix('ad
     Route::patch('/tables/{table}', [TableController::class, 'update'])->name('tables.update');
     Route::patch('/tables/{table}/status', [TableController::class, 'toggleStatus'])->name('tables.status');
     Route::delete('/tables/{table}', [TableController::class, 'destroy'])->name('tables.destroy');
+
+    Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
 });
 
 Route::middleware('auth')->group(function () {

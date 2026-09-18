@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use chillerlan\QRCode\Common\EccLevel;
 use chillerlan\QRCode\Common\Version;
 use chillerlan\QRCode\QRCode;
@@ -29,9 +30,9 @@ class KhqrService
 
     public function __construct()
     {
-        $this->accountId = config('bakong.account_id', '');
-        $this->merchantName = config('bakong.merchant_name', 'Bong Heng Cafe');
-        $this->merchantCity = config('bakong.merchant_city', 'Phnom Penh');
+        $this->accountId = (string) Setting::get('bakong_account_id', config('bakong.account_id', ''));
+        $this->merchantName = (string) Setting::get('bakong_merchant_name', config('bakong.merchant_name', 'Bong Heng Cafe'));
+        $this->merchantCity = (string) Setting::get('bakong_merchant_city', config('bakong.merchant_city', 'Phnom Penh'));
         $this->accessToken = config('bakong.access_token', '');
         $this->currency = config('bakong.currency', 'USD') === 'KHR' ? KHQRData::CURRENCY_KHR : KHQRData::CURRENCY_USD;
         $this->qrExpirationMinutes = (int) config('bakong.qr_expiration_minutes', 5);

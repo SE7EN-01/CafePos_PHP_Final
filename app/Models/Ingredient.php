@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property Carbon|null $expiry_date
+ */
 class Ingredient extends Model
 {
     protected $fillable = [
@@ -31,7 +35,7 @@ class Ingredient extends Model
             'reorder_level' => 'decimal:2',
             'purchase_cost' => 'decimal:4',
             'average_cost' => 'decimal:4',
-            'expiry_date' => 'date',
+            'expiry_date' => 'datetime',
         ];
     }
 

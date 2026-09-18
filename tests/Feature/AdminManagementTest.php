@@ -69,3 +69,18 @@ it('correctly loads bilingual translations on ingredient edit form', function ()
     $response->assertSee('Caramel Syrup');
     $response->assertSee('ស៊ីរ៉ូខារ៉ាមែល');
 });
+
+it('renders the enhanced modern dashboard for admin users', function () {
+    $admin = User::factory()->create(['email_verified_at' => now()]);
+    $admin->assignRole('admin');
+
+    $response = $this->actingAs($admin)->get(route('dashboard'));
+
+    $response->assertOk();
+    $response->assertSee('Today\'s Revenue', false);
+    $response->assertSee('Orders Today');
+    $response->assertSee('7-Day Revenue Trend');
+    $response->assertSee('Live Recent Orders');
+    $response->assertSee('Top Sellers');
+    $response->assertSee('Table Floor Plan');
+});
